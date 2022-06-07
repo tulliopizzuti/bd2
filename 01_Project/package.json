@@ -2,6 +2,9 @@
   "name": "bdproject",
   "version": "1.0.0",
   "description": "",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
   "main": "index.js",
   "dependencies": {
     "base64-js": "^1.5.1",
@@ -21,16 +24,16 @@
     "webidl-conversions": "^7.0.0",
     "whatwg-url": "^11.0.0"
   },
+  
   "devDependencies": {
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
     "express": "^4.18.1",
     "mongodb": "^4.6.0",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.16",
     "path": "^0.12.7"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC"
