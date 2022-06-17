@@ -3,19 +3,20 @@ const dotenv = require('dotenv');
 const path = require('path');
 const morgan = require('morgan');
 const bodyparser = require('body-parser');
-
-
-var index = require('./server/routes/index.route')
-
-
+const connectDB = require('./server/db/db');
+var indexRoutes = require('./server/routes/index.routes');
+var apiRoutes = require('./server/routes/api.routes');
 const app = express();
-
 dotenv.config( { path : '.env'} )
 const PORT = process.env.PORT || 8080
-
+connectDB();
 app.use(morgan('tiny'));
+
+
 app.use('/assets', express.static('assets'));
-app.use('/',index.index);
+app.use('/',indexRoutes);
+app.use('/api',apiRoutes);
+
 
 
 app.set('views', path.join(__dirname, 'views'));

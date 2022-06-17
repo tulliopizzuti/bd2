@@ -6,3 +6,4 @@ for FILE in $CSV_FILE; do
 	file="${file_name%.*}"
 	mongoimport -d $DB_NAME -c $file --type csv --file $FILE --headerline
 done
+mongo localhost:27017/spotify convertArray.js
