@@ -1,0 +1,4 @@
+group generi count/followers
+mostra artisti per genere
+range date su lista canzoni
+mostrare popolarità su lista canzoni
