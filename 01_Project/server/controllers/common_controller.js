@@ -5,7 +5,6 @@ exports.count=async function(model,fieldsValue){
 }
 exports.find=async function(model,fieldsValue,sortField,typeSort,limit,skip){
 	var q=model.find(util.createFilterString(fieldsValue));
-	console.log(fieldsValue);
 	var count= await this.count(model,fieldsValue);
 	
 	if(sortField && typeSort){		

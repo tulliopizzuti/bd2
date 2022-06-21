@@ -8,7 +8,7 @@ var schema = new mongoose.Schema({
     explicit: String,
     artists: Array,
     id_artists: Array,
-    release_date: String,
+    release_date: Date,
     danceability: String,
     energy: String,
     key: String,

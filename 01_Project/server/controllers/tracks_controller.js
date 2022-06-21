@@ -109,3 +109,47 @@ exports.avgPopularityByYear = async function(req,res){
 	});
 }
 
+
+
+exports.popularityTracksChart = async function(req,res){
+	var id=req.params.id;
+	var minDate=req.query.min;
+	var maxDate=req.query.max;
+	var sortField = req.query.sortField;
+	var typeSort = req.query.typeSort;
+	var conditionDate;
+	if(minDate && maxDate){
+		conditionDate={$gte:new Date(minDate),$lte:new Date(maxDate)}
+	}
+	else if(minDate && !maxDate){
+		conditionDate={$gte:new Date(minDate)}
+	}
+	else if(maxDate && !minDate){
+		conditionDate={$lte:new Date(maxDate)}
+	}
+	else{
+
+	}
+console.log(conditionDate);
+	if(!sortField){
+		sortField="release_date";
+	}
+	if(!typeSort){
+		typeSort=1;
+	}
+	var conds=[{fieldName:"id_artists",value:id}];
+	if(conditionDate){
+		conds.push({fieldName:"release_date",value:conditionDate,custom:true});
+	}
+	var tracks=await commonController.find(trackDb,conds,sortField,typeSort);	
+	res.json({
+		labels:tracks.data.map((x)=>util.formatDate(x.release_date,'yyyy/MM/DD')),
+		datasets: [{
+			label: 'Andamento popolarità tracce',
+			data: tracks.data.map((x)=>x.popularity),
+			fill: false,
+			borderColor: util.getNColors(1)[0]
+		}]
+	});
+}
+

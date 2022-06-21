@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 exports.createFilterString = function(fieldsValue){
 	if(fieldsValue){
 		var toRet={};
@@ -45,4 +47,8 @@ exports.getNColors=function(n){
 	}
 	return toRet;
 }
+exports.formatDate=function(date,format="DD/MM/yyyy"){
+	return moment(new Date(date)).format(format);
+}
+
 exports.hexColor=hexColor;

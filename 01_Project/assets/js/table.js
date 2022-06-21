@@ -36,7 +36,6 @@ $.fn.customTable = function( options ) {
                 r.fieldName=options.fieldName;
                 r.value=d.search.value;
                 r.skip=d.start;
-                console.log(r); 
                 return r;
 
             },

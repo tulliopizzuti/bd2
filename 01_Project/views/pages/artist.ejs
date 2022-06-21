@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <%- include('../partials/head'); %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/css/lightpick.css">
+
   <menu value="index" />
   
 </head>
@@ -73,6 +75,19 @@
                   <canvas id="mediaPopCanzoniProdotteChart"></canvas>
                 </div>
               </div>
+            </div><div class="col">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title d-inline-block">Andamento popolarità canzoni prodotte</h4>
+                  <div class="form-group d-inline-block float-end">
+                    <input type="text" id="date_start" class="form-control d-inline-block" placeholder="Start">
+                    <input type="text" id="date_end" class="form-control  d-inline-block" placeholder="End">
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="andamentoPopolaritaCanzoniChart"></canvas>
+                </div>
+              </div>
             </div>
 
           </section>
@@ -84,10 +99,34 @@
   <%- include('../partials/footer'); %>
   <script src="/assets/js/table.js"></script>
   <script src="/assets/js/util.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/lightpick.js"></script>
+
   <script type="text/javascript">
     var canzoniProdotteChart;
     var mediaCanzoniProdotteChart;
+    var andamentoPopolaritaCanzoniChart;
     var tableCanzoni;
+    var pickerStart = new Lightpick({
+      field: document.getElementById('date_start'),
+      format:"yyyy/MM/DD",
+      onSelect: function(start){
+        andamentoPopolaritaCanzoniChart.destroy();
+        loadDataAndamentoPopolaritaCanzoni();
+
+      }
+    });
+    var pickerEnd = new Lightpick({
+      field: document.getElementById('date_end'),
+            format:"yyyy/MM/DD",
+      onSelect: function(end){
+        andamentoPopolaritaCanzoniChart.destroy();
+        loadDataAndamentoPopolaritaCanzoni();
+
+      }
+    });
+
+
+
     $(document).ready(function () {
       tableCanzoni=$("#table_canzoni").customTable({
         order:[2,'desc'],
@@ -110,7 +149,7 @@
           },
           release_date:function(x){
 
-            return moment(x).format("DD/MM/yyyy");
+            return moment(new Date(x)).format("DD/MM/yyyy");
           }
         },
         customValue:
@@ -133,6 +172,9 @@
         mediaCanzoniProdotteChart.destroy();
         loadDataMediaCanzoniProdotteAnnoMese();
       });
+
+      loadDataAndamentoPopolaritaCanzoni();
+      
     });
     function loadDataCanzoniProdotteAnnoMese(){
       $.ajax({
@@ -172,10 +214,44 @@
         config
         );
     }
+    function initChartAndamentoPopolaritaCanzoni(data){
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          tooltips: {
+            intersect: false,
+            mode:'index'
+          }
+        }
+      };
+      andamentoPopolaritaCanzoniChart=new Chart(
+        $('#andamentoPopolaritaCanzoniChart'),
+        config
+        );
+    }
     function loadDataMediaCanzoniProdotteAnnoMese(){
       $.ajax({
         url: "/api/tracks/popularity/avg/year/<%= artist.id %>"+($("#checkbox_includimesimedia").prop('checked')?"?month=true":""),
         success: (data)=>initChartMediaCanzoniProdotteAnnoMese(data)
+      });      
+    }
+    function loadDataAndamentoPopolaritaCanzoni(){
+      var queryString=[];
+      var min=$('#date_start').val();
+      var max=$('#date_end').val();
+      if(min){
+        min="min="+min;
+        queryString.push(min);
+      }
+      if(max){
+        max="max="+max;
+        queryString.push(max);
+
+      }
+      $.ajax({
+        url: "/api/tracks/popularity/<%= artist.id %>"+(queryString.length>0?"?"+queryString.join('&'):""),
+        success: (data)=>initChartAndamentoPopolaritaCanzoni(data)
       });      
     }
 
