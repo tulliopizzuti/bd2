@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <%- include('../partials/head'); %>
+  <menu value="index" />
 </head>
 <body>
   <body>
@@ -52,36 +53,47 @@
     </div>
   </body>
   <%- include('../partials/footer'); %>
-  <script src="assets/js/custom.js"></script>
 
-  <script src="assets/js/table.js"></script>
-  <script src="assets/js/util.js"></script>
+  <script src="/assets/js/table.js"></script>
+  <script src="/assets/js/util.js"></script>
   <script type="text/javascript">
 
     $(document).ready(function () {
       $("#table_artisti").customTable({
-
-        url:'api/artists',
+        order:[2,'desc'],
+        url:'/api/artists',
         fieldName:"name",
         columns:[
         { data: 'name' },
         { data: 'popularity' },
         { data: 'followers' },
-        { data: 'genres' }
+        { data: 'genres' },
+        { data: 'id' },
+
         ],
         columnsName:[
-        "Nome","Popolarità (%)","Followers","Generi"
+        "Nome","Popolarità (%)","Followers","Generi","Visualizza"
         ],
         placeHolder:"Nome",
         map:{
           genres:function(x){
             return arrayToString(x);
           }
-        }
+        },
+        columnDefs: [
+        {
+          targets: -1,
+          data: "id",
+          render:function(data,type,row,meta){
+            return '<a class="btn btn-primary" href=/artist/'+data+'>Dettagli</a>';
+
+          }
+        },
+        ]
       });
       $("#table_canzoni").customTable({
-
-        url:'api/tracks',
+        order:[2,'desc'],
+        url:'/api/tracks',
         fieldName:"name",
         columns:[
         { data: 'name' },
@@ -97,6 +109,10 @@
           },
           artists:function(x){
             return arrayToString(x);
+          },
+          release_date:function(x){
+
+            return moment(x).format("DD/MM/yyyy");
           }
         }
       });

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+  <menu value="index" />
+  
+</head>
+<body>
+  <body>
+    <div id="app">
+      <%- include('../partials/menu'); %>
+      <div id="main">
+        <header class="mb-3">
+          <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+          </a>
+        </header>
+        <div class="page-heading">
+          <div class="page-title">
+            <div class="row">
+              <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>BD2 Ripoli/Pizzuti</h3>
+              </div>
+            </div>
+          </div>
+          <section class="section">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Popolarità</h4>
+              </div>
+              <div class="card-body">
+
+                <div class="row justify-content-end">
+                  <div class="col-4">
+                    <fieldset class="form-group">
+                      <select class="form-select" id="popularity_select">
+
+                      </select>
+                    </fieldset>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <canvas id="popularityChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </section><section class="section">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Followers</h4>
+              </div>
+              <div class="card-body">
+
+                <div class="row justify-content-end">
+                <div class="col-4">
+                  <fieldset class="form-group">
+                    <select class="form-select" id="followers_select">
+
+                    </select>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <canvas id="followersChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+<%- include('../partials/footer'); %>
+
+<script type="text/javascript">
+  var popularityChart;
+  var followersChart;
+  $(document).ready(function(){
+    setSelectBox();
+    loadData('popularity');
+    loadData('followers');
+    $('#popularity_select').on('change',function(){
+      popularityChart.destroy();
+      loadData('popularity');
+    });
+    $('#followers_select').on('change',function(){
+      followersChart.destroy();
+      loadData('followers');
+    });
+  });
+  function initChart(data,label){
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          tooltip:{
+            intersect : false,
+          }
+        }
+
+
+      },
+    };
+    var chart=new Chart(
+      $('#'+label+'Chart'),
+      config
+      );
+    if(label==="followers"){
+      followersChart=chart;
+    }
+    else{
+      popularityChart=chart;
+    }
+
+  }
+  function loadData(label){
+
+    var n=$('#'+label+'_select').val();
+    $.ajax({
+      url: "/api/artists/group/"+label+"/"+n,
+      success: (data)=>initChart(data,label)
+    });      
+  }
+  function setSelectBox(){
+    for(var i=1;i<10;i++){
+      $('#popularity_select').append($('<option/>').attr("value",(i+1)).text(i+1));
+      $('#followers_select').append($('<option/>').attr("value",(i+1)).text(i+1));
+    }
+  }
+    //
+
+
+
+  </script>
+
+</body>
+</html>
