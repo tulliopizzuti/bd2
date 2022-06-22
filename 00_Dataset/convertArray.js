@@ -1,7 +1,8 @@
 print("Artists: convert artists string in array");
 db.artists.find().forEach( function (x) {   
   var re = new RegExp("'", 'g');
-  x.genres = x.genres.replace("[","").replace("]","").replace(re,"").split(", ");
+  var re2 = new RegExp('"', 'g');
+  x.genres = x.genres.replace("[","").replace("]","").replace(re2,"").replace(re,"").split(", ");
   if(x.genres.length==1 && x.genres[0]===""){
     x.genres=[];
   }
@@ -12,8 +13,9 @@ db.artists.find().forEach( function (x) {
 });
 print("Tracks: convert artists string in array");
 db.tracks.find().forEach( function (x) {  
+  var re2 = new RegExp('"', 'g');
   var re = new RegExp("'", 'g'); 
-  x.artists = x.artists.replace("[","").replace("]","").replace(re,"").split(", ");
+  x.artists = x.artists.replace("[","").replace("]","").replace(re2,"").replace(re,"").split(", ");
   x.id_artists = x.id_artists.replace("[","").replace("]","").replace(re,"").split(", ");
   if(x.artists.length==1 && x.artists[0]===""){
     x.artists=[];

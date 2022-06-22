@@ -37,12 +37,13 @@ var hexColor=[
 "#bdbdbd",
 "#78909c"
 ];
-exports.getNColors=function(n){
+exports.getNColors=function(n,alpha="",skip=0){
 	var toRet=[];
-	var i=0;
+	var i=skip;
 	while(toRet.length<n){
-		toRet.push(hexColor[i++]);
 		i=(i%hexColor.length);
+		toRet.push(hexColor[i++]+alpha);
+		
 
 	}
 	return toRet;

@@ -11,5 +11,7 @@ router.get('/index',function(req,res){
 router.get('/popularity',function(req,res){
   res.render("pages/popularity");
 });
-
+router.get('/genres',function(req,res){
+  res.render("pages/genres");
+});
 module.exports = router;

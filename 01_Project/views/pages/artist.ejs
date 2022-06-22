@@ -167,11 +167,6 @@
     }
   });
 
-
-
-
-
-
   $(document).ready(function () {
     tableCanzoni=$("#table_canzoni").customTable({
       order:[2,'desc'],
@@ -181,9 +176,10 @@
       { data: 'name' },
       { data: 'artists' },
       { data: 'release_date' },
-      { data: 'duration_ms' }
+      { data: 'duration_ms' },
+      { data: 'popularity' }
       ],
-      columnsName:["Nome","Artisti","Data rilascio","Durata"],
+      columnsName:["Nome","Artisti","Data rilascio","Durata","Popolarità"],
       placeHolder:"Nome",
       map:{
         duration_ms:function(x){
@@ -250,9 +246,11 @@
       type: 'polarArea',
       data: data,
       options: {
-        tooltips: {
-          intersect: false,
-          mode:'index'
+        plugins: {
+          tooltips: {
+            intersect: false,
+            mode:'index'
+          }
         }
       }
     };
@@ -266,9 +264,11 @@
       type: 'line',
       data: data,
       options: {
-        tooltips: {
-          intersect: false,
-          mode:'index'
+        plugins: {
+          tooltips: {
+            intersect: false,
+            mode:'index'
+          }
         }
       }
     };

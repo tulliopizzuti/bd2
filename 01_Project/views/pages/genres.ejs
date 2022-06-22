@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head'); %>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/css/lightpick.css">
+
+	<menu value="genres" />
+
+</head>
+<body>
+	<body>
+		<div id="app">
+			<%- include('../partials/menu'); %>
+			<div id="main">
+				<header class="mb-3">
+					<a href="#" class="burger-btn d-block d-xl-none">
+						<i class="bi bi-justify fs-3"></i>
+					</a>
+				</header>
+				<div class="page-heading">
+					<div class="page-title">
+						<div class="row">
+							<div class="col-12 col-md-6 order-md-1 order-last">
+								<h3>BD2 Ripoli/Pizzuti</h3>
+							</div>
+						</div>
+					</div>
+					<section class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title d-inline-block">Generi </h4>
+									<div class="form-check d-inline-block float-end">
+										<div class="checkbox ">
+											<input type="checkbox" id="checkbox_nogenres" class="form-check-input" >
+											<label for="checkbox_nogenres">Includi senza genere</label>
+										</div>
+									</div>
+
+								</div>
+								<div class="card-body">
+									<table class="table" id="table_generi" class="display responsive nowrap" style="width:100%">
+
+
+									</table>
+								</div>
+							</div>
+						</div><div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title d-inline-block">Visione grafica </h4>
+									<div class="row">
+										<div class="col">
+											<input type="text" id="chart_text" class="form-control" placeholder="Nome">
+										</div>
+										
+										<div class="col">
+											<select class="form-select" id="chart_limit">
+												<option value="5">5</option>
+												<option value="10">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+												<option value="200">200</option>
+											</select>
+										</div>
+										<div class="col">
+											<select class="form-select" id="chart_order">
+												<option value="_id">Nome</option>
+												<option value="count">Totale</option>
+												<option value="med">Avg Popolarità</option>
+												<option value="followers">Followers</option>
+											</select>
+										</div>
+										<div class="col">
+											<select class="form-select" id="chart_orderType">
+												<option value="1">ASC</option>
+												<option value="-1">DESC</option>
+											</select>
+										</div>
+										<div class="col">
+											<div class="checkbox ">
+												<input type="checkbox" id="chart_nogenres" class="form-check-input" >
+												<label for="chart_nogenres">Includi senza genere</label>
+											</div>
+
+										</div>
+									</div>
+
+								</div>
+								<div class="card-body">
+									<canvas id="chartGeneri"></canvas>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</section>
+
+		</div>
+	</div>
+</div>
+</body>
+<%- include('../partials/footer'); %>
+<script src="/assets/js/table.js"></script>
+
+<script type="text/javascript">
+	var generiTable;
+	var chartGeneri;
+	$(document).ready(function () {
+		$("#checkbox_nogenres").on("change",function(){
+			generiTable.ajax.reload();
+		});
+		$("#chart_nogenres,#chart_text,#chart_limit,#chart_order,#chart_orderType").on("change",function(){
+			loadChartData();
+		});
+		generiTable=$("#table_generi").customTable({
+			order:[1,'desc'],
+			url:'/api/artists/genres',
+			fieldName:"_id",
+			columns:[
+			{ data: '_id' },
+			{ data: 'count' },
+			{ data: 'med' },
+			{ data: 'followers' },
+			{ data: '_id' }
+
+			],
+			columnsName:[
+			"Nome","Totale","Popolarità (%,avg)","Followers","Visualizza"
+			],
+			placeHolder:"Nome",
+
+			columnDefs: [
+			{
+				targets: -1,
+				data: "_id",
+				render:function(data,type,row,meta){
+					return '<a class="btn btn-primary" href=/artists/genres/'+data.replace(" ","+")+'>Dettagli</a>';
+
+				}
+			}
+			],
+			customValue:
+			{
+				"countNull":function(){return $("#checkbox_nogenres")[0].checked;}
+			},
+			map:{
+				med:function(x){
+					return Math.round((x + Number.EPSILON) * 100) / 100;
+				}
+			}
+		});
+		loadChartData();
+
+	});
+
+
+
+
+	function initChart(data){
+		var labels=[];
+		var counts=[];
+		var avgs=[];
+		var followers=[];
+
+
+
+		var totalFollowers=0;
+		var totalCounts=0;
+
+		$(data.data).each(function(){
+			labels.push(this._id);
+			counts.push(this.count);
+			avgs.push(this.med);
+			followers.push(this.followers);
+			totalFollowers+=this.followers;
+			totalCounts+=this.count;
+		});
+		for(var i=0;i<followers.length;i++){
+			followers[i]=(followers[i]/totalFollowers*100);
+		}
+		for(var i=0;i<counts.length;i++){
+			counts[i]=(counts[i]/totalCounts*100);
+		}
+
+
+
+
+
+
+
+
+		chartGeneri = new Chart($('#chartGeneri'), {
+			data: {
+				datasets: [{
+					type: 'bar',
+					label: 'Totale(%)',
+					data: counts,
+					backgroundColor:data.backgroundColorBar
+				},{
+					type: 'line',
+					label: 'Avg popolarità(%)',
+					data: avgs,
+					borderColor:data.backgroundColorLine[0],
+					backgroundColor:data.backgroundColorLine[0]
+				}, {
+					type: 'line',
+					label: 'Followers(%)',
+					data: followers,
+					borderColor:data.backgroundColorLine[1],
+					backgroundColor:data.backgroundColorLine[1]
+				}],
+				labels: labels,
+				
+			}
+		});
+	}
+	function loadChartData(){
+		if(chartGeneri){
+			chartGeneri.destroy();
+		}
+		var countNull =$('#chart_nogenres')[0].checked; 
+		var search    =$('#chart_text').val();
+		var limit     =$('#chart_limit').val();
+		var orderField=$('#chart_order').val();
+		var orderType =$('#chart_orderType').val();
+		var url=`/api/artists/genres?graph=true&search=${search}&sortField=${orderField}&typeSort=${orderType}&countNull=${countNull}&limit=${limit}`;
+		$.ajax({
+			url:url,
+			success: (data)=>initChart(data)
+		});
+	}
+
+
+</script>
+
+</body>
+</html>

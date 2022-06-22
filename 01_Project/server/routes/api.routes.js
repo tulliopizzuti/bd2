@@ -6,6 +6,8 @@ var router = express.Router();
 
 router.get('/artists',artists_controller.findArtists);
 router.get('/artists/group/:fieldname/:nclass',artists_controller.groupArtists);
+router.get('/artists/genres',artists_controller.listaGeneri);
+
 
 router.get('/tracks',tracks_controller.findTracks);
 router.get('/tracks/artist/:id',tracks_controller.findByArtistId);

@@ -13,3 +13,26 @@ function msToTime(duration) {
 function arrayToString(array){
     return array.join(', ');
 }
+function findMinMax(vect){
+    if(!vect){
+        return {};
+    }
+    if(vect.length==1){
+        return {
+            min:vect[0],max:vect[0]
+        }
+    }
+    var min=vect[0];
+    var max=vect[0];
+    for(var i=1;i<vect.length;i++){
+        if(vect[i]<min){
+            min=vect[i];
+        }
+        if(vect[i]>max){
+            max=vect[i];
+        }
+    }
+    return {
+        min:min,max:max
+    };
+}
