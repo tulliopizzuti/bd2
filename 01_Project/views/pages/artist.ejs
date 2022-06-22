@@ -30,11 +30,28 @@
               <div class="card">
                 <div class="card-header">
                   <h4 class="card-title d-inline-block">Artista: <%= artist.name %> </h4>
-                  <select class="form-select d-inline-block float-end w-25" id="featuring_select">
-                    <option value="*">All</option>
-                    <option value="solo">Solo</option>
-                    <option value="featuring">Featuring</option>
-                  </select>
+                  <div class="row">
+                    <div class="col">
+                      <input type="text" id="tracks_date_start" class="form-control d-inline-block" placeholder="Start">
+                      
+
+                    </div>
+                    <div class="col">
+                      <input type="text" id="tracks_date_end" class="form-control  d-inline-block" placeholder="End">
+                      
+                      
+                    </div>
+                    <div class="col">
+                      <select class="form-select" id="featuring_select">
+                        <option value="*">All</option>
+                        <option value="solo">Solo</option>
+                        <option value="featuring">Featuring</option>
+                      </select>
+
+                    </div>
+
+                  </div>
+
                 </div>
                 <div class="card-body">
                   <table class="table" id="table_canzoni" class="display responsive nowrap" style="width:100%">
@@ -79,183 +96,213 @@
               <div class="card">
                 <div class="card-header">
                   <h4 class="card-title d-inline-block">Andamento popolarità canzoni prodotte</h4>
-                  <div class="form-group d-inline-block float-end">
-                    <input type="text" id="date_start" class="form-control d-inline-block" placeholder="Start">
-                    <input type="text" id="date_end" class="form-control  d-inline-block" placeholder="End">
+                  <div class="row">
+                   <div class="col">
+                    <input type="text" id="date_start" class=" form-control d-inline-block" placeholder="Start">
+
                   </div>
-                </div>
-                <div class="card-body">
-                  <canvas id="andamentoPopolaritaCanzoniChart"></canvas>
-                </div>
-              </div>
+                  <div class="col">
+                   <input type="text" id="date_end" class="form-control  d-inline-block" placeholder="End">
+                 </div>
+
+               </div>
+             </div>
+             <div class="card-body">
+              <canvas id="andamentoPopolaritaCanzoniChart"></canvas>
             </div>
-
-          </section>
-
+          </div>
         </div>
-      </div>
+
+      </section>
+
     </div>
-  </body>
-  <%- include('../partials/footer'); %>
-  <script src="/assets/js/table.js"></script>
-  <script src="/assets/js/util.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/lightpick.js"></script>
+  </div>
+</div>
+</body>
+<%- include('../partials/footer'); %>
+<script src="/assets/js/table.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/lightpick.js"></script>
 
-  <script type="text/javascript">
-    var canzoniProdotteChart;
-    var mediaCanzoniProdotteChart;
-    var andamentoPopolaritaCanzoniChart;
-    var tableCanzoni;
-    var pickerStart = new Lightpick({
-      field: document.getElementById('date_start'),
-      format:"yyyy/MM/DD",
-      onSelect: function(start){
-        andamentoPopolaritaCanzoniChart.destroy();
-        loadDataAndamentoPopolaritaCanzoni();
-
-      }
-    });
-    var pickerEnd = new Lightpick({
-      field: document.getElementById('date_end'),
-            format:"yyyy/MM/DD",
-      onSelect: function(end){
-        andamentoPopolaritaCanzoniChart.destroy();
-        loadDataAndamentoPopolaritaCanzoni();
-
-      }
-    });
-
-
-
-    $(document).ready(function () {
-      tableCanzoni=$("#table_canzoni").customTable({
-        order:[2,'desc'],
-        url:'/api/tracks/artist/<%= artist.id %>',
-        fieldName:"name",
-        columns:[
-        { data: 'name' },
-        { data: 'artists' },
-        { data: 'release_date' },
-        { data: 'duration_ms' }
-        ],
-        columnsName:["Nome","Artisti","Data rilascio","Durata"],
-        placeHolder:"Nome",
-        map:{
-          duration_ms:function(x){
-            return msToTime(x);
-          },
-          artists:function(x){
-            return arrayToString(x);
-          },
-          release_date:function(x){
-
-            return moment(new Date(x)).format("DD/MM/yyyy");
-          }
-        },
-        customValue:
-        {"feat":function(){
-          return $("#featuring_select").val();
-        }}
-        
-      });
-      loadDataCanzoniProdotteAnnoMese();
-      $("#checkbox_includimesicanzoniprodotte").on("change",function(){
-        canzoniProdotteChart.destroy();
-        loadDataCanzoniProdotteAnnoMese();
-      });
-      $("#featuring_select").on("change",function(){
-        tableCanzoni.ajax.reload();
-
-      });
-      loadDataMediaCanzoniProdotteAnnoMese();
-      $("#checkbox_includimesimedia").on("change",function(){
-        mediaCanzoniProdotteChart.destroy();
-        loadDataMediaCanzoniProdotteAnnoMese();
-      });
-
+<script type="text/javascript">
+  var canzoniProdotteChart;
+  var mediaCanzoniProdotteChart;
+  var andamentoPopolaritaCanzoniChart;
+  var tableCanzoni;
+  var pickerStart = new Lightpick({
+    field: document.getElementById('date_start'),
+    format:"yyyy/MM/DD",
+    onSelect: function(start){
+      andamentoPopolaritaCanzoniChart.destroy();
       loadDataAndamentoPopolaritaCanzoni();
+
+    }
+  });
+  var pickerEnd = new Lightpick({
+    field: document.getElementById('date_end'),
+    format:"yyyy/MM/DD",
+    onSelect: function(end){
+      andamentoPopolaritaCanzoniChart.destroy();
+      loadDataAndamentoPopolaritaCanzoni();
+
+    }
+  });
+
+  var pickerStartTable = new Lightpick({
+    field: document.getElementById('tracks_date_start'),
+    format:"yyyy/MM/DD",
+    onSelect: function(start){
+      $('#tracks_date_start').trigger('change');
+
+
+    }
+  });
+  var pickerEndTable = new Lightpick({
+    field: document.getElementById('tracks_date_end'),
+    format:"yyyy/MM/DD",
+    onSelect: function(end){
+      $('#tracks_date_end').trigger('change');
       
+
+    }
+  });
+
+
+
+
+
+
+  $(document).ready(function () {
+    tableCanzoni=$("#table_canzoni").customTable({
+      order:[2,'desc'],
+      url:'/api/tracks/artist/<%= artist.id %>',
+      fieldName:"name",
+      columns:[
+      { data: 'name' },
+      { data: 'artists' },
+      { data: 'release_date' },
+      { data: 'duration_ms' }
+      ],
+      columnsName:["Nome","Artisti","Data rilascio","Durata"],
+      placeHolder:"Nome",
+      map:{
+        duration_ms:function(x){
+          return msToTime(x);
+        },
+        artists:function(x){
+          return arrayToString(x);
+        },
+        release_date:function(x){
+
+          return moment(new Date(x)).format("DD/MM/yyyy");
+        }
+      },
+      customValue:
+      {
+        "feat":function(){return $("#featuring_select").val();},
+        "min":function(){return $('#tracks_date_start').val()},
+        "max":function(){return $('#tracks_date_end').val()}
+      }
+
     });
-    function loadDataCanzoniProdotteAnnoMese(){
-      $.ajax({
-        url: "/api/tracks/artist/group/year/<%= artist.id %>"+($("#checkbox_includimesicanzoniprodotte").prop('checked')?"?month=true":""),
-        success: (data)=>initChartCanzoniProdotteAnnoMese(data)
-      });      
-    }
-    function initChartCanzoniProdotteAnnoMese(data){
-      const config = {
-        type: 'polarArea',
-        data: data,
-        options: {
-          tooltips: {
-            intersect: false,
-            mode:'index'
-          }
-        }
-      };
-      canzoniProdotteChart=new Chart(
-        $('#canzoniProdotteChart'),
-        config
-        );
-    }
-    function initChartMediaCanzoniProdotteAnnoMese(data){
-      const config = {
-        type: 'polarArea',
-        data: data,
-        options: {
-          tooltips: {
-            intersect: false,
-            mode:'index'
-          }
-        }
-      };
-      mediaCanzoniProdotteChart=new Chart(
-        $('#mediaPopCanzoniProdotteChart'),
-        config
-        );
-    }
-    function initChartAndamentoPopolaritaCanzoni(data){
-      const config = {
-        type: 'line',
-        data: data,
-        options: {
-          tooltips: {
-            intersect: false,
-            mode:'index'
-          }
-        }
-      };
-      andamentoPopolaritaCanzoniChart=new Chart(
-        $('#andamentoPopolaritaCanzoniChart'),
-        config
-        );
-    }
-    function loadDataMediaCanzoniProdotteAnnoMese(){
-      $.ajax({
-        url: "/api/tracks/popularity/avg/year/<%= artist.id %>"+($("#checkbox_includimesimedia").prop('checked')?"?month=true":""),
-        success: (data)=>initChartMediaCanzoniProdotteAnnoMese(data)
-      });      
-    }
-    function loadDataAndamentoPopolaritaCanzoni(){
-      var queryString=[];
-      var min=$('#date_start').val();
-      var max=$('#date_end').val();
-      if(min){
-        min="min="+min;
-        queryString.push(min);
-      }
-      if(max){
-        max="max="+max;
-        queryString.push(max);
+    loadDataCanzoniProdotteAnnoMese();
+    $("#checkbox_includimesicanzoniprodotte").on("change",function(){
+      canzoniProdotteChart.destroy();
+      loadDataCanzoniProdotteAnnoMese();
+    });
+    $("#featuring_select,#tracks_date_start,#tracks_date_end").on("change",function(){
+      tableCanzoni.ajax.reload();
 
-      }
-      $.ajax({
-        url: "/api/tracks/popularity/<%= artist.id %>"+(queryString.length>0?"?"+queryString.join('&'):""),
-        success: (data)=>initChartAndamentoPopolaritaCanzoni(data)
-      });      
-    }
+    });
+    loadDataMediaCanzoniProdotteAnnoMese();
+    $("#checkbox_includimesimedia").on("change",function(){
+      mediaCanzoniProdotteChart.destroy();
+      loadDataMediaCanzoniProdotteAnnoMese();
+    });
 
-  </script>
+    loadDataAndamentoPopolaritaCanzoni();
+
+  });
+  function loadDataCanzoniProdotteAnnoMese(){
+    $.ajax({
+      url: "/api/tracks/artist/group/year/<%= artist.id %>"+($("#checkbox_includimesicanzoniprodotte").prop('checked')?"?month=true":""),
+      success: (data)=>initChartCanzoniProdotteAnnoMese(data)
+    });      
+  }
+  function initChartCanzoniProdotteAnnoMese(data){
+    const config = {
+      type: 'polarArea',
+      data: data,
+      options: {
+        tooltips: {
+          intersect: false,
+          mode:'index'
+        }
+      }
+    };
+    canzoniProdotteChart=new Chart(
+      $('#canzoniProdotteChart'),
+      config
+      );
+  }
+  function initChartMediaCanzoniProdotteAnnoMese(data){
+    const config = {
+      type: 'polarArea',
+      data: data,
+      options: {
+        tooltips: {
+          intersect: false,
+          mode:'index'
+        }
+      }
+    };
+    mediaCanzoniProdotteChart=new Chart(
+      $('#mediaPopCanzoniProdotteChart'),
+      config
+      );
+  }
+  function initChartAndamentoPopolaritaCanzoni(data){
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        tooltips: {
+          intersect: false,
+          mode:'index'
+        }
+      }
+    };
+    andamentoPopolaritaCanzoniChart=new Chart(
+      $('#andamentoPopolaritaCanzoniChart'),
+      config
+      );
+  }
+  function loadDataMediaCanzoniProdotteAnnoMese(){
+    $.ajax({
+      url: "/api/tracks/popularity/avg/year/<%= artist.id %>"+($("#checkbox_includimesimedia").prop('checked')?"?month=true":""),
+      success: (data)=>initChartMediaCanzoniProdotteAnnoMese(data)
+    });      
+  }
+  function loadDataAndamentoPopolaritaCanzoni(){
+    var queryString=[];
+    var min=$('#date_start').val();
+    var max=$('#date_end').val();
+    if(min){
+      min="min="+min;
+      queryString.push(min);
+    }
+    if(max){
+      max="max="+max;
+      queryString.push(max);
+
+    }
+    $.ajax({
+      url: "/api/tracks/popularity/<%= artist.id %>"+(queryString.length>0?"?"+queryString.join('&'):""),
+      success: (data)=>initChartAndamentoPopolaritaCanzoni(data)
+    });      
+  }
+
+</script>
 
 </body>
 </html>

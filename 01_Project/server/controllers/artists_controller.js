@@ -76,4 +76,20 @@ exports.artistDetails = async function(id){
 }
 
 
+exports.contaPerGenere = async function(req,res){
+	var valueSearch = req.query.search;
+	var countNull = req.query.countNull;
+	var sortField = req.query.sortField;
+	var typeSort = req.query.typeSort;
+	var limit=req.query.limit;
+	var skip=req.query.skip;
+
+
+
+
+
+
+
+
+}
 

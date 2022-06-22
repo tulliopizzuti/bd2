@@ -24,6 +24,8 @@ exports.findByArtistId = async function(req,res){
 	var limit=req.query.limit;
 	var skip=req.query.skip;
 	var feat=req.query.feat;
+	var minDate=req.query.min;
+	var maxDate=req.query.max;
 	var conditionFeat="1==1";
 	if(feat==="solo"){
 		conditionFeat="this.id_artists.length==1";
@@ -35,13 +37,30 @@ exports.findByArtistId = async function(req,res){
 	else{
 		
 	}
+	var conditionDate;
+	if(minDate && maxDate){
+		conditionDate={$gte:new Date(minDate),$lte:new Date(maxDate)}
+	}
+	else if(minDate && !maxDate){
+		conditionDate={$gte:new Date(minDate)}
+	}
+	else if(maxDate && !minDate){
+		conditionDate={$lte:new Date(maxDate)}
+	}
+	else{
 
-	var tracks=await commonController.find(trackDb,
-		[
+	}
+	var conds=[
 		{fieldName:"id_artists",value:id},
 		{fieldName:fieldName,value:value},
 		{fieldName:"$where",value:conditionFeat,custom:true}
-		],sortField,typeSort,limit,skip);	
+		];
+	if(conditionDate){
+		conds.push({fieldName:"release_date",value:conditionDate,custom:true});
+	}
+
+	var tracks=await commonController.find(trackDb,
+		conds,sortField,typeSort,limit,skip);	
 	res.json(tracks);
 }
 
@@ -130,7 +149,6 @@ exports.popularityTracksChart = async function(req,res){
 	else{
 
 	}
-console.log(conditionDate);
 	if(!sortField){
 		sortField="release_date";
 	}
