@@ -11,8 +11,21 @@ exports.findTracks = async function(req,res){
 	var typeSort = req.query.typeSort;
 	var limit=req.query.limit;
 	var skip=req.query.skip;
-	var tracks=await commonController.find(trackDb,[{fieldName:fieldName,value:value}],sortField,typeSort,limit,skip);	
-	res.json(tracks);	
+	var one=req.query.one;
+	var tracks=await commonController.find(trackDb,[{fieldName:fieldName,value:value}],sortField,typeSort,limit,skip);
+	if(one){
+		var toRet={};
+		if(tracks.data.length>0){
+			toRet= tracks.data[0];
+		}		
+		res.json(toRet);	
+	}
+	else{
+		res.json(tracks);	
+
+	}
+
+
 }
 
 exports.findByArtistId = async function(req,res){
@@ -51,10 +64,10 @@ exports.findByArtistId = async function(req,res){
 
 	}
 	var conds=[
-		{fieldName:"id_artists",value:id},
-		{fieldName:fieldName,value:value},
-		{fieldName:"$where",value:conditionFeat,custom:true}
-		];
+	{fieldName:"id_artists",value:id},
+	{fieldName:fieldName,value:value},
+	{fieldName:"$where",value:conditionFeat,custom:true}
+	];
 	if(conditionDate){
 		conds.push({fieldName:"release_date",value:conditionDate,custom:true});
 	}

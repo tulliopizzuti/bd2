@@ -4,125 +4,124 @@
 	<%- include('../partials/head'); %>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/css/lightpick.css">
 
-	<menu value="genres" />
+	<menu value="genres"></menu>
 
 </head>
+
 <body>
-	<body>
-		<div id="app">
-			<%- include('../partials/menu'); %>
-			<div id="main">
-				<header class="mb-3">
-					<a href="#" class="burger-btn d-block d-xl-none">
-						<i class="bi bi-justify fs-3"></i>
-					</a>
-				</header>
-				<div class="page-heading">
-					<div class="page-title">
-						<div class="row">
-							<div class="col-12 col-md-6 order-md-1 order-last">
-								<h3>BD2 Ripoli/Pizzuti</h3>
-							</div>
-						</div>
-					</div>
-					<section class="row">
-						<div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<h4 class="card-title d-inline-block">Generi </h4>
-									<div class="form-check d-inline-block float-end">
-										<div class="checkbox ">
-											<input type="checkbox" id="checkbox_nogenres" class="form-check-input" >
-											<label for="checkbox_nogenres">Includi senza genere</label>
-										</div>
-									</div>
+   <div id="app">
+      <%- include('../partials/menu'); %>
+      <div id="main">
+         <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+               <i class="bi bi-justify fs-3"></i>
+            </a>
+         </header>
+         <div class="page-heading">
+            <div class="page-title">
+               <div class="row">
+                  <div class="col-12 col-md-6 order-md-1 order-last">
+                     <h3>BD2 Ripoli/Pizzuti</h3>
+                  </div>
+               </div>
+            </div>
+            <section class="row">
+               <div class="col-12">
+                  <div class="card">
+                     <div class="card-header">
+                        <h4 class="card-title d-inline-block">Generi</h4>
+                        <div class="form-check d-inline-block float-end">
+                           <div class="checkbox ">
+                              <input type="checkbox" id="checkbox_nogenres" class="form-check-input" />
+                              <label for="checkbox_nogenres">Includi senza genere</label>
+                           </div>
+                        </div>
 
-								</div>
-								<div class="card-body">
-									<table class="table" id="table_generi" class="display responsive nowrap" style="width:100%">
+                     </div>
+                     <div class="card-body">
+                        <table class="table" id="table_generi" class="display responsive nowrap" style="width:100%">
 
 
-									</table>
-								</div>
-							</div>
-						</div><div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<h4 class="card-title d-inline-block">Visione grafica </h4>
-									<div class="row">
-										<div class="col">
-											<div class="form-group">
-												<label >Genere</label>
-												<input type="text" id="chart_text" class="form-control" placeholder="Nome">
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-12">
+                  <div class="card">
+                     <div class="card-header">
+                        <h4 class="card-title d-inline-block">Visione grafica</h4>
+                        <div class="row">
+                           <div class="col">
+                              <div class="form-group">
+                                 <label >Genere</label>
+                                 <input type="text" id="chart_text" class="form-control" placeholder="Nome">
 
-											</div>
-										</div>
-										
-										<div class="col">
-											<div class="form-group">
-												<label>Limit</label>
-												<select class="form-select" id="chart_limit">
-													<option value="5">5</option>
-													<option value="10">10</option>
-													<option value="20">20</option>
-													<option value="50">50</option>
-													<option value="100">100</option>
-													<option value="200">200</option>
-												</select>
-											</div>
-											
-										</div>
-										<div class="col">
-											<div class="form-group ">
-												<label >Ordina</label>
-												<select class="form-select" id="chart_order">
-													<option value="_id">Nome</option>
-													<option value="count">Totale</option>
-													<option value="med">Avg Popolarità</option>
-													<option value="followers">Followers</option>
-												</select>
-											</div>
-											
-										</div>
-										<div class="col">
-											<div class="form-group">
-												<label >Tipo ordinamento</label>
-												<select class="form-select" id="chart_orderType">
-													<option value="1">ASC</option>
-													<option value="-1">DESC</option>
-												</select>
-											</div>
-											
-										</div>
-										<div class="col">
-											<div class="form-group">
-												<label>Valori null</label>
-												<div class="checkbox ">
-													<input type="checkbox" id="chart_nogenres" class="form-check-input" >
-													<label for="chart_nogenres">Includi senza genere</label>
-												</div>
-											</div>
-											
+                              </div>
+                           </div>
 
-										</div>
-									</div>
+                           <div class="col">
+                              <div class="form-group">
+                                 <label>Limit</label>
+                                 <select class="form-select" id="chart_limit">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                 </select>
+                              </div>
 
-								</div>
-								<div class="card-body" id="container_chartGeneri">
-									<canvas id="chartGeneri"></canvas>
-									
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+                           </div>
+                           <div class="col">
+                              <div class="form-group ">
+                                 <label >Ordina</label>
+                                 <select class="form-select" id="chart_order">
+                                    <option value="_id">Nome</option>
+                                    <option value="count">Totale</option>
+                                    <option value="med">Avg Popolarità</option>
+                                    <option value="followers">Followers</option>
+                                 </select>
+                              </div>
 
-			</section>
+                           </div>
+                           <div class="col">
+                              <div class="form-group">
+                                 <label >Tipo ordinamento</label>
+                                 <select class="form-select" id="chart_orderType">
+                                    <option value="1">ASC</option>
+                                    <option value="-1">DESC</option>
+                                 </select>
+                              </div>
 
-		</div>
-	</div>
-</div>
+                           </div>
+                           <div class="col">
+                              <div class="form-group">
+                                 <label>Valori null</label>
+                                 <div class="checkbox ">
+                                    <input type="checkbox" id="chart_nogenres" class="form-check-input" >
+                                    <label for="chart_nogenres">Includi senza genere</label>
+                                 </div>
+                              </div>
+
+
+                           </div>
+                        </div>
+
+                     </div>
+                     <div class="card-body" id="container_chartGeneri">
+                        <canvas id="chartGeneri"></canvas>
+
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+         </div>
+      </div>
+   </div>
 </body>
+
 <%- include('../partials/footer'); %>
 <script src="/assets/js/table.js"></script>
 <script src="/assets/js/util.js"></script>
@@ -267,18 +266,18 @@
 								var l2=`Real value: ${eff}`;
 								
 								return [
-									l,l2
-								];
-							}
+                             l,l2
+                             ];
+                         }
 
 
-						}
-					}
-				}
+                     }
+                 }
+             }
 
 
-			},
-		});
+         },
+     });
 		stopSpinner("#container_chartGeneri");
 
 	}
@@ -302,5 +301,4 @@
 
 </script>
 
-</body>
 </html>

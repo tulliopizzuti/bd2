@@ -4,151 +4,148 @@
 	<%- include('../partials/head'); %>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightpick@1.2.5/css/lightpick.css">
 
-	<menu value="genres" />
+	<menu value="genres" ></menu>
 
 </head>
 <body>
-	<body>
-		<div id="app">
-			<%- include('../partials/menu'); %>
-			<div id="main">
-				<header class="mb-3">
-					<a href="#" class="burger-btn d-block d-xl-none">
-						<i class="bi bi-justify fs-3"></i>
-					</a>
-				</header>
-				<div class="page-heading">
-					<div class="page-title">
-						<div class="row">
-							<div class="col-12 col-md-6 order-md-1 order-last">
-								<h3>BD2 Ripoli/Pizzuti</h3>
+	<div id="app">
+		<%- include('../partials/menu'); %>
+		<div id="main">
+			<header class="mb-3">
+				<a href="#" class="burger-btn d-block d-xl-none">
+					<i class="bi bi-justify fs-3"></i>
+				</a>
+			</header>
+			<div class="page-heading">
+				<div class="page-title">
+					<div class="row">
+						<div class="col-12 col-md-6 order-md-1 order-last">
+							<h3>BD2 Ripoli/Pizzuti</h3>
+						</div>
+					</div>
+				</div>
+				<section class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title d-inline-block">Genere: <%= genre %></h4>
+								
+
+							</div>
+							<div class="card-body">
+								<table class="table" id="table_artisti" class="display responsive nowrap" style="width:100%">
+
+
+								</table>
 							</div>
 						</div>
 					</div>
-					<section class="row">
-						<div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<h4 class="card-title d-inline-block">Genere: <%= genre %></h4>
-									
+					<div class="col-12">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title d-inline-block">Raggruppa generi</h4>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label >Min</label>
+											<input type="text" id="min_group" class="form-control" placeholder="Min" value="3">
 
-								</div>
-								<div class="card-body">
-									<table class="table" id="table_artisti" class="display responsive nowrap" style="width:100%">
+										</div>
+									</div><div class="col">
+										<div class="form-group">
+											<label >Max</label>
+											<input type="text" id="max_group" class="form-control" placeholder="Max" value="3">
 
-
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<h4 class="card-title d-inline-block">Raggruppa generi</h4>
-									<div class="row">
-										<div class="col">
-											<div class="form-group">
-												<label >Min</label>
-												<input type="text" id="min_group" class="form-control" placeholder="Min" value="3">
-
-											</div>
-										</div><div class="col">
-											<div class="form-group">
-												<label >Max</label>
-												<input type="text" id="max_group" class="form-control" placeholder="Max" value="3">
-
-											</div>
 										</div>
 									</div>
 								</div>
-								<div class="card-body" id="chartGroup_container">
-									<canvas id="chartGroup"></canvas>
+							</div>
+							<div class="card-body" id="chartGroup_container">
+								<canvas id="chartGroup"></canvas>
 
-								</div>
 							</div>
 						</div>
-
 					</div>
+
 				</div>
+			</div>
 
-			</section>
+		</section>
 
-		</div>
 	</div>
-</div>
-</body>
-<%- include('../partials/footer'); %>
-<script src="/assets/js/table.js"></script>
-<script src="/assets/js/util.js"></script>
+	
+	<%- include('../partials/footer'); %>
+	<script src="/assets/js/table.js"></script>
+	<script src="/assets/js/util.js"></script>
 
-<script type="text/javascript">
-	$(document).ready(function () {
-		$("#table_artisti").customTable({
-			order:[2,'desc'],
-			url:'/api/artists',
-			fieldName:"name",
-			columns:[
-			{ data: 'name' },
-			{ data: 'popularity' },
-			{ data: 'followers' },
-			{ data: 'genres' }
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#table_artisti").customTable({
+				order:[2,'desc'],
+				url:'/api/artists',
+				fieldName:"name",
+				columns:[
+				{ data: 'name' },
+				{ data: 'popularity' },
+				{ data: 'followers' },
+				{ data: 'genres' }
 
-			],
-			columnsName:[
-			"Nome","Popolarità (%)","Followers","Generi","Visualizza"
-			],
-			placeHolder:"Nome",
-			map:{
-				genres:function(x){
-					return arrayToString(x);
+				],
+				columnsName:[
+				"Nome","Popolarità (%)","Followers","Generi","Visualizza"
+				],
+				placeHolder:"Nome",
+				map:{
+					genres:function(x){
+						return arrayToString(x);
+					}
+				},
+				
+				customValue:
+				{
+					"genres":"<%= genre %>"
 				}
-			},
-			
-			customValue:
-			{
-				"genres":"<%= genre %>"
-			}
+			});
+			loadDataChartGroup();
+			$('#min_group, #max_group').on("change",loadDataChartGroup);
+
 		});
-		loadDataChartGroup();
-		$('#min_group, #max_group').on("change",loadDataChartGroup);
+		var chartGroup;
+		var loadChartSpinnerSelector="#chartGroup_container";
+		function loadDataChartGroup(){
+			startSpinner(loadChartSpinnerSelector);
+			var queryString=[];
+			var min=$('#min_group').val();
+			var max=$('#max_group').val();
+			if(min){
+				min="min="+min;
+				queryString.push(min);
+			}
+			if(max){
+				max="max="+max;
+				queryString.push(max);
 
-	});
-	var chartGroup;
-	var loadChartSpinnerSelector="#chartGroup_container";
-	function loadDataChartGroup(){
-		startSpinner(loadChartSpinnerSelector);
-		var queryString=[];
-		var min=$('#min_group').val();
-		var max=$('#max_group').val();
-		if(min){
-			min="min="+min;
-			queryString.push(min);
+			}
+			$.ajax({
+				url: "/api/artists/genres/group/<%= genre %>"+(queryString.length>0?"?"+queryString.join('&'):""),
+				success: (data)=>initChartGroup(data)
+			});      
 		}
-		if(max){
-			max="max="+max;
-			queryString.push(max);
+		function initChartGroup(data){
+
+			if(chartGroup){
+				chartGroup.destroy();
+			}
+			const config = {
+				type: 'doughnut',
+				data: data
+			};
+			chartGroup=new Chart($('#chartGroup'), config);
+			stopSpinner(loadChartSpinnerSelector);
 
 		}
-		$.ajax({
-			url: "/api/artists/genres/group/<%= genre %>"+(queryString.length>0?"?"+queryString.join('&'):""),
-			success: (data)=>initChartGroup(data)
-		});      
-	}
-	function initChartGroup(data){
 
-		if(chartGroup){
-			chartGroup.destroy();
-		}
-		const config = {
-			type: 'doughnut',
-			data: data
-		};
-		chartGroup=new Chart($('#chartGroup'), config);
-		stopSpinner(loadChartSpinnerSelector);
-
-	}
-
-</script>
+	</script>
 
 </body>
 </html>

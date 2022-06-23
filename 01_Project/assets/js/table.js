@@ -33,7 +33,14 @@ $.fn.customTable = function( options ) {
                 r.sortField=d.columns[d.order[0].column].data;
                 r.typeSort= d.order[0].dir==='asc'?1:-1;
                 r.limit=d.length;
-                r.fieldName=options.fieldName;
+                if(typeof options.fieldName==="function"){
+                    r.fieldName=options.fieldName.call();
+
+                }
+                else{
+                    r.fieldName=options.fieldName;
+
+                }
                 r.value=d.search.value;
                 r.skip=d.start;
                 return r;

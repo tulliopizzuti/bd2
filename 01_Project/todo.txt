@@ -6,4 +6,3 @@ popolarità generi join multicollections
 
 filtri tabelle pagina index
 chart sistemare tooltip quando le stats sono basse
-genere sistemare tooltip in modo da mostrare le quantità reali oltre alle %
