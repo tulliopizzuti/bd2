@@ -184,8 +184,10 @@
 	function initChart(data){
 		var labels=[];
 		var counts=[];
+		var countsNorm=[];
 		var avgs=[];
 		var followers=[];
+		var followersNorm=[];
 
 
 
@@ -201,10 +203,10 @@
 			totalCounts+=this.count;
 		});
 		for(var i=0;i<followers.length;i++){
-			followers[i]=(followers[i]/totalFollowers*100);
+			followersNorm.push(followers[i]/totalFollowers*100);
 		}
 		for(var i=0;i<counts.length;i++){
-			counts[i]=(counts[i]/totalCounts*100);
+			countsNorm.push(counts[i]/totalCounts*100);
 		}
 
 
@@ -215,28 +217,67 @@
 
 
 		chartGeneri = new Chart($('#chartGeneri'), {
+			type: 'bar',
 			data: {
 				datasets: [{
-					type: 'bar',
 					label: 'Totale(%)',
-					data: counts,
-					backgroundColor:data.backgroundColorBar
-				},{
+					data: countsNorm,
+					backgroundColor:data.backgroundColorBar,
+					order:3
+				},
+				{
 					type: 'line',
 					label: 'Avg popolarità(%)',
 					data: avgs,
 					borderColor:data.backgroundColorLine[0],
-					backgroundColor:data.backgroundColorLine[0]
-				}, {
+					backgroundColor:data.backgroundColorLine[0],
+					order:2
+				},
+				{
 					type: 'line',
 					label: 'Followers(%)',
-					data: followers,
+					data: followersNorm,
 					borderColor:data.backgroundColorLine[1],
-					backgroundColor:data.backgroundColorLine[1]
+					backgroundColor:data.backgroundColorLine[1],
+					order:1
 				}],
 				labels: labels,
-				
-			}
+			},
+			options: {
+				plugins: {
+					tooltip:{
+						callbacks: {
+							label:function(item,chart){
+								var i=item.dataIndex;
+								var eff="";
+								switch(item.datasetIndex){
+									case 1:
+									eff=avgs[i];
+									break;
+									case 2:
+									eff=followers[i];
+
+									break;
+									default:
+									eff=counts[i];
+
+									break;
+								}
+								var l=`${item.dataset.label}: ${item.formattedValue}`;
+								var l2=`Real value: ${eff}`;
+								
+								return [
+									l,l2
+								];
+							}
+
+
+						}
+					}
+				}
+
+
+			},
 		});
 		stopSpinner("#container_chartGeneri");
 

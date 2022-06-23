@@ -17,25 +17,25 @@ exports.createFilterString = function(fieldsValue){
 	return {};
 }
 var hexColor=[
+"#29b6f6",
+"#42a5f5",
 "#ef5350",
-"#ec407a",
 "#ab47bc",
 "#7e57c2",
-"#5c6bc0",
-"#42a5f5",
-"#29b6f6",
-"#26c6da",
-"#26a69a",
-"#66bb6a",
-"#9ccc65",
-"#d4e157",
-"#ffee58",
-"#ffca28",
-"#ffa726",
 "#ff7043",
+"#9ccc65",
+"#66bb6a",
+"#5c6bc0",
+"#ec407a",
+"#ffa726",
+"#26a69a",
+"#26c6da",
+"#d4e157",
+"#ffca28",
+"#78909c",
 "#8d6e63",
 "#bdbdbd",
-"#78909c"
+"#ffee58"
 ];
 exports.getNColors=function(n,alpha="",skip=0){
 	var toRet=[];
