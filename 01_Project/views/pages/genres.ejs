@@ -51,44 +51,64 @@
 									<h4 class="card-title d-inline-block">Visione grafica </h4>
 									<div class="row">
 										<div class="col">
-											<input type="text" id="chart_text" class="form-control" placeholder="Nome">
+											<div class="form-group">
+												<label >Genere</label>
+												<input type="text" id="chart_text" class="form-control" placeholder="Nome">
+
+											</div>
 										</div>
 										
 										<div class="col">
-											<select class="form-select" id="chart_limit">
-												<option value="5">5</option>
-												<option value="10">10</option>
-												<option value="20">20</option>
-												<option value="50">50</option>
-												<option value="100">100</option>
-												<option value="200">200</option>
-											</select>
-										</div>
-										<div class="col">
-											<select class="form-select" id="chart_order">
-												<option value="_id">Nome</option>
-												<option value="count">Totale</option>
-												<option value="med">Avg Popolarità</option>
-												<option value="followers">Followers</option>
-											</select>
-										</div>
-										<div class="col">
-											<select class="form-select" id="chart_orderType">
-												<option value="1">ASC</option>
-												<option value="-1">DESC</option>
-											</select>
-										</div>
-										<div class="col">
-											<div class="checkbox ">
-												<input type="checkbox" id="chart_nogenres" class="form-check-input" >
-												<label for="chart_nogenres">Includi senza genere</label>
+											<div class="form-group">
+												<label>Limit</label>
+												<select class="form-select" id="chart_limit">
+													<option value="5">5</option>
+													<option value="10">10</option>
+													<option value="20">20</option>
+													<option value="50">50</option>
+													<option value="100">100</option>
+													<option value="200">200</option>
+												</select>
 											</div>
+											
+										</div>
+										<div class="col">
+											<div class="form-group ">
+												<label >Ordina</label>
+												<select class="form-select" id="chart_order">
+													<option value="_id">Nome</option>
+													<option value="count">Totale</option>
+													<option value="med">Avg Popolarità</option>
+													<option value="followers">Followers</option>
+												</select>
+											</div>
+											
+										</div>
+										<div class="col">
+											<div class="form-group">
+												<label >Tipo ordinamento</label>
+												<select class="form-select" id="chart_orderType">
+													<option value="1">ASC</option>
+													<option value="-1">DESC</option>
+												</select>
+											</div>
+											
+										</div>
+										<div class="col">
+											<div class="form-group">
+												<label>Valori null</label>
+												<div class="checkbox ">
+													<input type="checkbox" id="chart_nogenres" class="form-check-input" >
+													<label for="chart_nogenres">Includi senza genere</label>
+												</div>
+											</div>
+											
 
 										</div>
 									</div>
 
 								</div>
-								<div class="card-body">
+								<div class="card-body" id="container_chartGeneri">
 									<canvas id="chartGeneri"></canvas>
 									
 								</div>
@@ -105,6 +125,7 @@
 </body>
 <%- include('../partials/footer'); %>
 <script src="/assets/js/table.js"></script>
+<script src="/assets/js/util.js"></script>
 
 <script type="text/javascript">
 	var generiTable;
@@ -138,7 +159,7 @@
 				targets: -1,
 				data: "_id",
 				render:function(data,type,row,meta){
-					return '<a class="btn btn-primary" href=/artists/genres/'+data.replace(" ","+")+'>Dettagli</a>';
+					return '<a class="btn btn-primary" href=/artist/genres/'+data.replace(" ","+")+'>Dettagli</a>';
 
 				}
 			}
@@ -217,11 +238,14 @@
 				
 			}
 		});
+		stopSpinner("#container_chartGeneri");
+
 	}
 	function loadChartData(){
 		if(chartGeneri){
 			chartGeneri.destroy();
 		}
+		startSpinner("#container_chartGeneri");
 		var countNull =$('#chart_nogenres')[0].checked; 
 		var search    =$('#chart_text').val();
 		var limit     =$('#chart_limit').val();

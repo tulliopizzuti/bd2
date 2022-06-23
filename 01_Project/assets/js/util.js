@@ -1,8 +1,8 @@
 function msToTime(duration) {
     var milliseconds = parseInt((duration%1000)/100)
-        , seconds = parseInt((duration/1000)%60)
-        , minutes = parseInt((duration/(1000*60))%60)
-        , hours = parseInt((duration/(1000*60*60))%24);
+    , seconds = parseInt((duration/1000)%60)
+    , minutes = parseInt((duration/(1000*60))%60)
+    , hours = parseInt((duration/(1000*60*60))%24);
 
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -35,4 +35,17 @@ function findMinMax(vect){
     return {
         min:min,max:max
     };
+}
+
+
+
+function startSpinner(selector){
+    var spinnerHtml='<div class="spinner-container text-center"> <div class="spinner-border text-success" role="status"> <span class="visually-hidden">Loading...</span> </div></div>';
+    $(selector).children().addClass("d-none")
+    $(selector).prepend($(spinnerHtml));
+}
+function stopSpinner(selector){
+    $(selector+" .spinner-container").remove();
+    $(selector+ " .d-none").removeClass("d-none")
+
 }

@@ -32,21 +32,32 @@
                   <h4 class="card-title d-inline-block">Artista: <%= artist.name %> </h4>
                   <div class="row">
                     <div class="col">
-                      <input type="text" id="tracks_date_start" class="form-control d-inline-block" placeholder="Start">
+                      <div class="form-group">
+                        <label >Data inizio</label>
+                        <input type="text" id="tracks_date_start" class="form-control d-inline-block" placeholder="Start">
+
+                      </div>
                       
 
                     </div>
                     <div class="col">
-                      <input type="text" id="tracks_date_end" class="form-control  d-inline-block" placeholder="End">
-                      
+                      <div class="form-group">
+                        <label >Data fine</label>
+                        <input type="text" id="tracks_date_end" class="form-control  d-inline-block" placeholder="End">
+
+                      </div>
                       
                     </div>
                     <div class="col">
-                      <select class="form-select" id="featuring_select">
-                        <option value="*">All</option>
-                        <option value="solo">Solo</option>
-                        <option value="featuring">Featuring</option>
-                      </select>
+                      <div class="form-group">
+                        <label>Partecipanti</label>
+                        <select class="form-select" id="featuring_select">
+                          <option value="*">All</option>
+                          <option value="solo">Solo</option>
+                          <option value="featuring">Featuring</option>
+                        </select>
+                      </div>
+                      
 
                     </div>
 
@@ -72,7 +83,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="container_canzoniProdotteChart">
                   <canvas id="canzoniProdotteChart"></canvas>
                 </div>
               </div>
@@ -88,7 +99,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="container_mediaPopCanzoniProdotteChart">
                   <canvas id="mediaPopCanzoniProdotteChart"></canvas>
                 </div>
               </div>
@@ -98,26 +109,34 @@
                   <h4 class="card-title d-inline-block">Andamento popolarità canzoni prodotte</h4>
                   <div class="row">
                    <div class="col">
-                    <input type="text" id="date_start" class=" form-control d-inline-block" placeholder="Start">
+                    <div class="form-group ">
+                      <label for="first-name-icon">Data inizio</label>
+                      <input type="text" id="date_start" class=" form-control d-inline-block" placeholder="Start">
+
+                    </div>
 
                   </div>
                   <div class="col">
-                   <input type="text" id="date_end" class="form-control  d-inline-block" placeholder="End">
-                 </div>
+                    <div class="form-group">
+                      <label for="first-name-icon">Data fine</label>
+                      <input type="text" id="date_end" class="form-control  d-inline-block" placeholder="End">
 
-               </div>
-             </div>
-             <div class="card-body">
-              <canvas id="andamentoPopolaritaCanzoniChart"></canvas>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="card-body" id="container_andamentoPopolaritaCanzoniChart">
+                <canvas id="andamentoPopolaritaCanzoniChart"></canvas>
+              </div>
             </div>
           </div>
-        </div>
 
-      </section>
+        </section>
 
+      </div>
     </div>
   </div>
-</div>
 </body>
 <%- include('../partials/footer'); %>
 <script src="/assets/js/table.js"></script>
@@ -129,6 +148,11 @@
   var mediaCanzoniProdotteChart;
   var andamentoPopolaritaCanzoniChart;
   var tableCanzoni;
+
+  var canzoniProdotteChartSelector="#container_canzoniProdotteChart";
+  var mediaCanzoniProdotteChartSelector="#container_mediaPopCanzoniProdotteChart";
+  var andamentoPopolaritaCanzoniChartSelector="#container_andamentoPopolaritaCanzoniChart";
+
   var pickerStart = new Lightpick({
     field: document.getElementById('date_start'),
     format:"yyyy/MM/DD",
@@ -220,6 +244,8 @@
 
   });
   function loadDataCanzoniProdotteAnnoMese(){
+    startSpinner(canzoniProdotteChartSelector);
+
     $.ajax({
       url: "/api/tracks/artist/group/year/<%= artist.id %>"+($("#checkbox_includimesicanzoniprodotte").prop('checked')?"?month=true":""),
       success: (data)=>initChartCanzoniProdotteAnnoMese(data)
@@ -240,6 +266,7 @@
       $('#canzoniProdotteChart'),
       config
       );
+    stopSpinner(canzoniProdotteChartSelector);
   }
   function initChartMediaCanzoniProdotteAnnoMese(data){
     const config = {
@@ -258,6 +285,8 @@
       $('#mediaPopCanzoniProdotteChart'),
       config
       );
+    stopSpinner(mediaCanzoniProdotteChartSelector);
+
   }
   function initChartAndamentoPopolaritaCanzoni(data){
     const config = {
@@ -276,14 +305,19 @@
       $('#andamentoPopolaritaCanzoniChart'),
       config
       );
+    stopSpinner(andamentoPopolaritaCanzoniChartSelector);
+
   }
   function loadDataMediaCanzoniProdotteAnnoMese(){
+    startSpinner(mediaCanzoniProdotteChartSelector);
+
     $.ajax({
       url: "/api/tracks/popularity/avg/year/<%= artist.id %>"+($("#checkbox_includimesimedia").prop('checked')?"?month=true":""),
       success: (data)=>initChartMediaCanzoniProdotteAnnoMese(data)
     });      
   }
   function loadDataAndamentoPopolaritaCanzoni(){
+    startSpinner(andamentoPopolaritaCanzoniChartSelector);
     var queryString=[];
     var min=$('#date_start').val();
     var max=$('#date_end').val();

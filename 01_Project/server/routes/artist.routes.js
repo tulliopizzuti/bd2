@@ -11,4 +11,11 @@ router.get('/:id',async function(req,res){
 	});
 });
 
+router.get('/genres/:name',function(req,res){
+	var name=req.params.name.replace("+", " ");
+	res.render("pages/artists_genres",{
+		genre:name
+	});
+});
+
 module.exports = router;

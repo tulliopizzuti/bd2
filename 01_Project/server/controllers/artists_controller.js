@@ -59,6 +59,95 @@ exports.groupArtists = async function(req,res){
 	});
 }
 
+
+
+exports.groupArtistsGenres=async function(req,res){
+	var genre = req.params.genre;
+	var min = req.query.min;
+	var max = req.query.max;
+	min=parseInt(min);
+	max=parseInt(max);
+	if(genre){
+		genre=genre.replace("+",' ');
+	}
+	else{
+		res.json({
+			error : 'Error'
+		});
+		return;
+	}
+	var q=artistDb.aggregate();
+	q.match({genres:genre});
+	if(min || max){
+		q.project({
+			arraySize:{$size:"$genres"},
+			genres:1
+		});
+		if(min && max){
+			q.match({
+				arraySize:{$gte:min,$lte:max}
+			});
+		}else if(min && !max){
+			q.match({
+				arraySize:{$gte:min}
+			});
+		}else if(!min && max){
+			q.match({
+				arraySize:{$lte:max}
+			});
+		}
+		else{
+
+		}
+	}
+
+	q.group({
+		_id: "$genres",
+		count:{$sum:1}
+	});
+	q.sort({"count":-1});
+	q.project({
+		_id:{
+			$reduce: {
+				input: "$_id",
+				initialValue: "",
+				in: {$concat: ["$$value", "$$this",", "]}
+			}
+		},
+		count:"$count"
+	});
+	q.project({
+		_id:{
+			$substr:[
+			"$_id",
+			0,
+			{$subtract:[{$strLenCP:'$_id'},2]}
+			]
+		},
+		count:"$count"
+	});
+	q.allowDiskUse(true).exec(function(err,result){
+		if(err) throw err;
+		if(result){
+			res.json({
+				labels:result.map((x)=>x._id),
+				datasets:[
+				{
+					label: 'My First Dataset',
+					data: result.map((x)=>x.count),
+					backgroundColor: util.getNColors(result.length)
+				}
+				]
+			});			
+		}
+		else {
+			res.json({
+				error : 'Error'
+			});
+		}
+	});
+}
+
 exports.findArtists = async function(req,res){
 	var fieldName = req.query.fieldName;
 	var value = req.query.value;
@@ -66,9 +155,21 @@ exports.findArtists = async function(req,res){
 	var typeSort = req.query.typeSort;
 	var limit=req.query.limit;
 	var skip=req.query.skip;
-	var artists=await commonController.find(artistDb,[{fieldName:fieldName,value:value}],sortField,typeSort,limit,skip);	
+	var genres=req.query.genres;
+	var conds=[];
+	if(fieldName && value){
+		conds.push({fieldName:fieldName,value:value});
+	}
+	if(genres){
+		conds.push({
+			fieldName:"genres",value:genres,custom:true
+		});
+	}
+	var artists=await commonController.find(artistDb,conds,sortField,typeSort,limit,skip);	
 	res.json(artists);	
 }
+
+
 
 exports.artistDetails = async function(id){
 	var res=await commonController.find(artistDb,[{fieldName:"id",value:id}],"id",1,1,0);	
