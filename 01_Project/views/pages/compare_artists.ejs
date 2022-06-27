@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head'); %>
+
+	<menu value="compare_artists"></menu>
+
+</head>
+
+<body>
+	<div id="app">
+		<%- include('../partials/menu'); %>
+		<div id="main">
+			<header class="mb-3">
+				<a href="#" class="burger-btn d-block d-xl-none">
+					<i class="bi bi-justify fs-3"></i>
+				</a>
+			</header>
+			<div class="page-heading">
+				<div class="page-title">
+					<div class="row">
+						<div class="col-12 col-md-6 order-md-1 order-last">
+							<h3>BD2 Ripoli/Pizzuti</h3>
+						</div>
+					</div>
+				</div>
+				<section class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title d-inline-block">Compara artisti</h4>
+								
+
+							</div>
+							<div class="card-body">
+								<table class="table" id="table_artisti" class="display responsive nowrap" style="width:100%">
+
+
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="card">
+							
+							<div class="card-body" id="container_chart">
+								<canvas id="chart"></canvas>
+							</div>
+						</div>
+					</div>
+
+				</section>
+
+
+
+				<input type="text" id="hidden" class="d-none">
+			</div>
+		</div>
+	</div>
+</body>
+
+<%- include('../partials/footer'); %>
+<script src="/assets/js/table.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript">
+	var artistiTable;
+	var onLoad=false;
+	var loadChartSpinner="#container_chart";
+	var chart;
+	$(document).ready(function () {
+		$('#hidden').on('removehidden',function(){
+			loadData();
+		});
+		$('#hidden').on('addhidden',function(){
+			loadData();
+
+		});
+		generiTable=$("#table_artisti").customTable({
+			order:[1,'desc'],
+			url:'/api/artists',
+			fieldName:"_id",
+			columns:[
+			{ data: 'name' },
+			{ data: 'popularity' },
+			{ data: 'followers' },
+			{ data: 'genres' },
+			{ data: 'id' },
+			{ data: 'id' }
+
+			],
+			columnsName:[
+			"Nome","Popolarità (%)","Followers","Generi","Aggiungi","Rimuovi"
+			],
+			placeHolder:"Nome",
+			fieldName:"name",
+
+			columnDefs: [
+			{
+				targets: -2,
+				data: "_id",
+				render:function(data,type,row,meta){
+					return '<a class="btn btn-primary" onclick="addValueArray(\''+data.replace(" ","+")+'\')">Aggiungi</a>';
+				}
+			},
+			{
+				targets: -1,
+				data: "_id",
+				render:function(data,type,row,meta){
+					return '<a class="btn btn-primary" onclick="removeValueArray(\''+data.replace(" ","+")+'\')">Rimuovi</a>';
+				}
+			}
+			],
+			map:{
+				genres:function(x){
+					return arrayToString(x);
+				}
+			},
+		});
+	});
+	function loadData(){
+		startSpinner(loadChartSpinner);
+
+		var text=$('#hidden').val();
+		var arr=stringToArray(text);
+		if(arr[0]===''){
+			arr.splice(0, 1);
+		}
+		for(var i=0;i<arr.length;i++){
+			arr[i]="id[]="+arr[i];
+		}
+		var queryString=arr.join("&");
+		$.ajax({
+			url: "/api/artists/tracks?"+queryString,
+			success: (data)=>initChart(data)
+		});
+	}
+	var totalDuration=0;
+	var realDuration=[];
+	function initChart(ajaxData){
+		if(chart){
+			chart.destroy();
+		}
+		var data={};
+		totalDuration=0;
+		realDuration=[];
+		if(ajaxData.labels.length>0 && ajaxData.labels[0]!==null){
+			var datasets=[];
+			var l=Object.keys(ajaxData.value[0]);
+			data.labels=l;
+			for(var i=0;i<ajaxData.value.length;i++){
+				var dataset={};
+				dataset.label=ajaxData.labels[i];
+				dataset.backgroundColor=ajaxData.colorsAlpha[i];
+				dataset.borderColor=ajaxData.colors[i];
+				dataset.pointBackgroundColor=ajaxData.colors[i];
+				dataset.pointBorderColor='#fff';
+				dataset.pointHoverBackgroundColor='#fff';
+				dataset.pointHoverBorderColor=ajaxData.colors[i];
+				
+				dataset.fill=true;
+				dataset.data=[];
+				for(var j=0;j<data.labels.length;j++){
+					var k=data.labels[j];
+					if(k==="avgDuration"){
+						totalDuration+=ajaxData.value[i][k];
+						realDuration.push(ajaxData.value[i][k]);
+					}
+					dataset.data.push(ajaxData.value[i][k]);
+
+				}
+				datasets.push(dataset);
+			}
+			data.datasets=datasets;
+			for(var i=0;i<realDuration.length;i++){
+				var length=datasets[i].data.length;
+				var val=((datasets[i].data[length-1])/totalDuration);
+				datasets[i].data[length-1]=val;
+			}
+		}
+		var config = {
+			type: 'radar',
+			data: data,
+			options: {
+				elements: {
+					line: {
+						borderWidth: 3
+					}
+				},
+				plugins: {
+					tooltip:{
+						callbacks: {
+							label:function(item){
+								var i=item.datasetIndex;
+								var label=[];
+								var l=`${item.dataset.label}: ${item.formattedValue}`;
+								label.push(l);
+								if(item.label==="avgDuration"){
+									var eff=msToTime(realDuration[i]);
+									var l2=`Real value: ${eff}`;
+									label.push(l2);
+
+								}
+								
+								return label;
+							}
+
+
+						}
+					}
+				}
+
+
+			}
+		};
+		chart=new Chart($('#chart'), config);
+		onLoad=false;
+		stopSpinner(loadChartSpinner);
+	}
+
+	function addValueArray(s){
+		if(!onLoad){
+			onLoad=true;
+			var text=$('#hidden').val();
+			var arr=stringToArray(text);
+			if(arr[0]===''){
+				arr.splice(0, 1);
+			}
+			if(!arrayContains(arr,s)){
+				arr.push(s);
+			}
+			$('#hidden').val(arrayToString(arr));
+			$('#hidden').trigger('addhidden');
+		}else{
+			showOnLoadMessage();
+		}
+		
+	}
+	function removeValueArray(s){
+		if(!onLoad){
+			onLoad=true;
+			var text=$('#hidden').val();
+			var arr=stringToArray(text);
+			if(arr[0]===''){
+				arr.splice(0, 1);
+			}
+			var index = arr.indexOf(s);
+			if (index !== -1) {
+				arr.splice(index, 1);
+			}
+			$('#hidden').val(arr.join(','));
+			$('#hidden').trigger('removehidden');
+		}
+		else{
+			showOnLoadMessage();
+		}
+	}
+	function showOnLoadMessage(){
+		Swal.fire({
+			icon: 'error',
+			title: 'Oops...',
+			text: 'Wait until chart is loaded!'
+		});
+	}
+
+
+	
+
+
+
+</script>
+
+</html>

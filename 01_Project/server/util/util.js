@@ -18,9 +18,9 @@ exports.createFilterString = function(fieldsValue){
 }
 var hexColor=[
 "#29b6f6",
-"#42a5f5",
 "#ef5350",
 "#ab47bc",
+"#42a5f5",
 "#7e57c2",
 "#ff7043",
 "#9ccc65",

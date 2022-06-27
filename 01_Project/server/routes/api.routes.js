@@ -5,9 +5,13 @@ var router = express.Router();
 
 
 router.get('/artists',artists_controller.findArtists);
+router.get('/artists/tracks',artists_controller.lookupArtistsTracks);
 router.get('/artists/group/:fieldname/:nclass',artists_controller.groupArtists);
 router.get('/artists/genres',artists_controller.listaGeneri);
 router.get('/artists/genres/group/:genre',artists_controller.groupArtistsGenres);
+
+router.get('/genres/tracks',artists_controller.lookupGenresTracks);
+router.get('/lookup',artists_controller.lookup);
 
 
 router.get('/tracks',tracks_controller.findTracks);

@@ -239,3 +239,151 @@ function initQListaGeneri(q,valueSearch,countNull){
 	return q;
 }
 
+
+
+
+exports.lookup = async function(req,res){
+	
+	var q=artistDb.aggregate();
+	q.allowDiskUse(true);
+	q.sort({id:1});
+	q.lookup({
+		from: 'tracks',
+		localField: 'id',
+		foreignField: 'id_artists',
+		as: 'tracks'
+	});
+	q.project({
+		_id:1,
+		id:1,
+		tracks:1,
+		tracks_size:{$size:'$tracks'}
+	});
+	q.project({
+		_id:1,
+		id:1,
+		tracks_size:1
+	});
+	q.sort({tracks_size:-1});
+	q.limit(10);
+	q.allowDiskUse(true).exec(function(err,result){
+		if(err) throw err;
+		if(result){
+			res.json(result);
+			
+		}
+		else {
+			res.json({
+				error : 'Error'
+			});
+		}
+	});
+	
+}
+
+
+
+exports.lookupArtistsTracks = async function(req,res){
+	var idQ=req.query.id;
+	var ids=[];
+	if(!Array.isArray(idQ)){
+		ids.push(idQ);
+	}
+	else{
+		ids=idQ;
+	}
+	var toRet=[];
+	for(var i=0;i<ids.length;i++){
+		var id=ids[i];
+		var q=artistDb.aggregate();
+		q.allowDiskUse(true);
+		q.match({id:id});
+		q.lookup({
+			from: 'tracks',
+			localField: 'id',
+			foreignField: 'id_artists',
+			as: 'tracks'
+		});
+		q.unwind('tracks');
+		q.replaceRoot("tracks");
+		q.group({
+			_id: null,
+			avgDanceability:{$avg:'$danceability'},
+			avgEnergy:{$avg:'$energy'},
+			avgSpeechiness:{$avg:'$speechiness'},
+			avgAcousticness:{$avg:'$acousticness'},
+			avgExplicit:{$avg:'$explicit'},
+			avgLiveness:{$avg:'$liveness'},
+			avgDuration:{$avg:'$duration_ms'}
+		});
+		q.project({'_id':0});
+		var result= await q.exec();
+		toRet.push(result[0]);
+	}
+	var artists=[];
+	for(var i=0;i<ids.length;i++){
+		if(ids[i]){
+			var resultFind=await exports.artistDetails(ids[i]);
+			artists.push(resultFind.data[0].name);
+		}
+		else{
+			artists.push(null);
+		}
+		
+	}
+	
+	
+	await res.json({labels:artists,value:toRet,
+		colors:util.getNColors(ids.length),
+		colorsAlpha:util.getNColors(ids.length,"20")
+	});
+
+
+	
+}
+
+exports.lookupGenresTracks = async function(req,res){
+	var idQ=req.query.genres;
+	var ids=[];
+	if(!Array.isArray(idQ)){
+		ids.push(idQ);
+	}
+	else{
+		ids=idQ;
+	}
+	var toRet=[];
+	for(var i=0;i<ids.length;i++){
+		var id=ids[i];
+		var q=artistDb.aggregate();
+		q.allowDiskUse(true);
+		q.match({genres:id});
+		q.lookup({
+			from: 'tracks',
+			localField: 'id',
+			foreignField: 'id_artists',
+			as: 'tracks'
+		});
+		q.unwind('tracks');
+		q.replaceRoot("tracks");
+		q.group({
+			_id: null,
+			avgDanceability:{$avg:'$danceability'},
+			avgEnergy:{$avg:'$energy'},
+			avgSpeechiness:{$avg:'$speechiness'},
+			avgAcousticness:{$avg:'$acousticness'},
+			avgExplicit:{$avg:'$explicit'},
+			avgLiveness:{$avg:'$liveness'},
+			avgDuration:{$avg:'$duration_ms'}
+		});
+		q.project({'_id':0});
+		var result= await q.exec();
+		toRet.push(result[0]);
+	}
+	await res.json({labels:ids,value:toRet,
+		colors:util.getNColors(ids.length),
+		colorsAlpha:util.getNColors(ids.length,"20")
+	});
+
+	
+}
+

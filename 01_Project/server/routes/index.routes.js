@@ -14,4 +14,10 @@ router.get('/popularity',function(req,res){
 router.get('/genres',function(req,res){
   res.render("pages/genres");
 });
+router.get('/compare_genres',function(req,res){
+  res.render("pages/compare_genres");
+});
+router.get('/compare_artists',function(req,res){
+  res.render("pages/compare_artists");
+});
 module.exports = router;

@@ -34,3 +34,21 @@ db.tracks.find().forEach( function(x) {
   db.tracks.save(x);
 
 });
+/*print("Tracks: add objectID array");
+
+db.tracks.updateMany({}, {$set: {"_id_artists": []}});
+var i=0;
+db.artists.find().forEach( function (art) {   
+
+  db.tracks.find({id_artists:art.id}).forEach(function(tr){
+
+    tr._id_artists.push(art._id);
+    db.tracks.save(tr);
+
+  });
+  i++;
+  if((i%1000)===0){
+    print("Total: "+i);
+  }
+});
+*/
