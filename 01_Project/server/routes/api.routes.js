@@ -12,6 +12,8 @@ router.get('/artists/genres/group/:genre',artists_controller.groupArtistsGenres)
 
 router.get('/genres/tracks',artists_controller.lookupGenresTracks);
 router.get('/lookup',artists_controller.lookup);
+router.get('/duplicate/artists',artists_controller.duplicates);
+router.get('/duplicate/tracks',tracks_controller.duplicates);
 
 
 router.get('/tracks',tracks_controller.findTracks);

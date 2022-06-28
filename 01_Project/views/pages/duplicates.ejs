@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <menu value="duplicates"></menu>
+
+</head>
+
+<body>
+  <div id="app">
+    <%- include('../partials/menu'); %>
+    <div id="main">
+      <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+          <i class="bi bi-justify fs-3"></i>
+        </a>
+      </header>
+      <div class="page-heading">
+        <div class="page-title">
+          <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+              <h3>BD2 Ripoli/Pizzuti</h3>
+            </div>
+          </div>
+        </div>
+        <section class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title d-inline-block">Artisti duplicati</h4>
+                <div class="row justify-content-end">
+                 <div class="col">
+                  <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="nome_artista" class="form-control" />
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label>Campo</label>
+                    <select class="form-select" id="artistfield_select" multiple="true">
+                      <option value="name">Nome</option>
+                      <option value="genres">Generi</option>
+                      <option value="popularity">Popolarità</option>
+                      <option value="followers">Followers</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="card-body" id="table_artists_container">
+              <table class="table" id="table_artists" class="display responsive nowrap" style="width:100%">
+
+
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title d-inline-block">Canzoni duplicate</h4>
+              <div class="row justify-content-end">
+                <div class="col">
+                  <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="nome_traccia" class="form-control" />
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label>Campo</label>
+                    <select class="form-select" id="trackfield_select" multiple="true">
+                      <option value="name">Nome</option>
+                      <option value="popularity">Popolarità</option>
+                      <option value="duration_ms">Durata ms</option>
+                      <option value="explicit">Esplicita</option>
+                      <option value="artists">Artisti</option>
+                      <option value="release_date">Data rilascio</option>
+                      <option value="danceability">Danzabilità</option>
+                      <option value="energy">Energia</option>
+                      <option value="key">Key</option>
+                      <option value="loudness">Volume</option>
+                      <option value="mode">Mode</option>
+                      <option value="speechiness">Discorsiva</option>
+                      <option value="acousticness">Acustica</option>
+                      <option value="instrumentalness">Strumentalità</option>
+                      <option value="liveness">Vitalità</option>
+                      <option value="valence">Valenza</option>
+                      <option value="tempo">Tempo</option>
+                      <option value="time_signature">Time Signature</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="card-body" id="table_tracks_container">
+              <table class="table" id="table_tracks" class="display responsive nowrap" style="width:100%">
+
+
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+
+    </div>
+  </div>
+</div>
+</body>
+
+<%- include('../partials/footer'); %>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script type="text/javascript">
+  var tableArtist;
+  var selectorArtistTable="#table_artists_container";
+
+  var tableTrack;
+  var selectorTrackTable="#table_tracks_container";
+
+  function selectOneOptionMessage(){
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Select at least one option'
+    });
+  }
+
+
+
+  $(document).ready(function(){
+    $('select').select2({
+      placeholder: 'Select an option'
+    });
+    $('#nome_artista').on("change",function(){
+      if($('#artistfield_select').val().length>0){
+        loadArtistData();
+      }
+    });
+    $('#nome_traccia').on("change",function(){
+      if($('#trackfield_select').val().length>0){
+        loadTrackData();
+      }
+    });
+    $('#artistfield_select').on("change",function(){
+      loadArtistData();
+    });
+    $('#trackfield_select').on("change",function(){
+      loadTrackData();
+    });
+  });
+
+
+
+  function loadTrackData(){
+    $("#trackfield_select").attr("disabled","true");
+    $("#nome_traccia").attr("disabled","true");
+
+    if(tableTrack){
+      tableTrack.destroy();
+      $("#table_tracks").empty();
+      tableTrack=null;
+    }
+    startSpinner(selectorTrackTable);
+    
+    var arrValue=$("#trackfield_select").val();
+    if(arrValue.length===0){
+      selectOneOptionMessage();
+      stopSpinner(selectorTrackTable);
+      $("#nome_traccia").removeAttr("disabled");      
+      $("#trackfield_select").removeAttr("disabled");
+      return;
+    }
+    for(var i=0;i<arrValue.length;i++){
+      arrValue[i]="fields[]="+arrValue[i];
+    }
+    arrValue.push("name="+$('#nome_traccia').val());
+    
+    var queryString=arrValue.join("&");
+    $.ajax({
+      url: "/api/duplicate/tracks?"+queryString,
+      success: (data)=>{
+        tableTrack=initTable("#table_tracks",selectorTrackTable,$("#trackfield_select").val(),data);
+        $("#nome_traccia").removeAttr("disabled");
+
+        $("#trackfield_select").removeAttr("disabled");
+      }
+    });
+  }
+
+
+
+  function loadArtistData(){
+    $("#artistfield_select").attr("disabled","true");
+    $("#nome_artista").attr("disabled","true");
+    if(tableArtist){
+      tableArtist.destroy();
+      $("#table_artists").empty();
+      tableArtist=null;
+    }
+    startSpinner(selectorArtistTable);
+    
+    var arrValue=$("#artistfield_select").val();
+    if(arrValue.length===0){
+      selectOneOptionMessage();
+      stopSpinner(selectorArtistTable);
+      $("#nome_artista").removeAttr("disabled");
+      $("#artistfield_select").removeAttr("disabled");
+      return;
+    }
+    for(var i=0;i<arrValue.length;i++){
+      arrValue[i]="fields[]="+arrValue[i];
+    }
+    arrValue.push("name="+$('#nome_artista').val());
+    var queryString=arrValue.join("&");
+    $.ajax({
+      url: "/api/duplicate/artists?"+queryString,
+      success: (data)=>{
+        tableArtist=initTable("#table_artists",selectorArtistTable,$("#artistfield_select").val(),data);
+        $("#nome_artista").removeAttr("disabled");
+        $("#artistfield_select").removeAttr("disabled");
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+  function initTable(selector,spinnerSelector,cols,data){
+    cols = ["count", ...cols];
+    var th=$.map( cols, function( val, i ) {
+      return ($('<th/>').text(val));
+    });
+    var tr=$("<tr/>");
+    tr.append(th);
+    var thead=$("<thead/>");
+    thead.append(tr);
+
+    $(selector).prepend(thead);
+    var columns=[];
+
+    for(var i=0;i<cols.length;i++){
+      columns.push({data:cols[i]});
+    }
+    var table=$(selector).DataTable( {
+      data: data,
+      columns: columns
+    } );
+    stopSpinner(spinnerSelector);
+    return table;
+  }
+
+
+
+
+
+</script>
+
+</html>

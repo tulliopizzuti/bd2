@@ -23,4 +23,7 @@ router.get('/compare_genres',function(req,res){
 router.get('/compare_artists',function(req,res){
   res.render("pages/compare_artists");
 });
+router.get('/duplicates',function(req,res){
+  res.render("pages/duplicates");
+});
 module.exports = router;

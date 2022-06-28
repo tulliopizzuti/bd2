@@ -4,6 +4,24 @@ const artistDb = require("../db/models/artist");
 const util = require("../util/util");
 const commonController = require("./common_controller");
 
+
+exports.duplicates = async function(req,res){
+	var fields=req.query.fields;
+	var name=req.query.name;
+	if(!fields || !Array.isArray(fields)){
+		res.json({
+			error : 'Passing fields array'
+		});
+		return;
+	}
+	res.json(await commonController.duplicates(artistDb,fields,name));
+
+
+}
+
+
+
+
 exports.groupArtists = async function(req,res){
 	var fieldName = req.params.fieldname;
 	var classParam = req.params.nclass;
