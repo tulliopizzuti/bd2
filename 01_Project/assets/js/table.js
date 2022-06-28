@@ -16,6 +16,7 @@ $.fn.customTable = function( options ) {
         serverSide: true,
         order:options.order,
         columnDefs:options.columnDefs,
+        searchDelay: 1000,
         ajax: {
             dataType: "json",
             url: options.url,
