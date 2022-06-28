@@ -1,0 +1,490 @@
+{
+	"info": {
+		"_postman_id": "011d9b55-b8c9-421b-99fa-a9257e4bddc2",
+		"name": "db2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Cerca artisti",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/artists?fieldName=name&value=eminem&limit=10&skip=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"artists"
+					],
+					"query": [
+						{
+							"key": "fieldName",
+							"value": "name"
+						},
+						{
+							"key": "value",
+							"value": "eminem"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "skip",
+							"value": "0"
+						},
+						{
+							"key": "genres",
+							"value": "pop",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "duplicate artists",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/duplicate/artists?fields[]=name&name=Justin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"duplicate",
+						"artists"
+					],
+					"query": [
+						{
+							"key": "fields[]",
+							"value": "name"
+						},
+						{
+							"key": "fields[]",
+							"value": "popularity",
+							"disabled": true
+						},
+						{
+							"key": "fields[]",
+							"value": "genres",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "Justin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "duplicate tracks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/duplicate/tracks?fields[]=name&name=Hold",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"duplicate",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "fields[]",
+							"value": "name"
+						},
+						{
+							"key": "fields[]",
+							"value": "popularity",
+							"disabled": true
+						},
+						{
+							"key": "fields[]",
+							"value": "genres",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "Hold"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pivot artisti tracce",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/artists/tracks?id=6eUKZXaKkcviH0Ku9w2n3V&id=6eUKZXaKkcviH0Ku9w2n3V",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"artists",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6eUKZXaKkcviH0Ku9w2n3V"
+						},
+						{
+							"key": "id",
+							"value": "6eUKZXaKkcviH0Ku9w2n3V"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lookup genres tracks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/genres/tracks?genres[]=pop&genres[]=dance+pop",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"genres",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "skip",
+							"value": "0",
+							"disabled": true
+						},
+						{
+							"key": "fieldName",
+							"value": "eminem",
+							"disabled": true
+						},
+						{
+							"key": "genres[]",
+							"value": "pop"
+						},
+						{
+							"key": "genres[]",
+							"value": "dance+pop"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lookup",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/lookup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cerca tracce",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks?fieldName=name&value=Eminem&limit=10&skip=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "fieldName",
+							"value": "name"
+						},
+						{
+							"key": "value",
+							"value": "Eminem"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "skip",
+							"value": "0"
+						},
+						{
+							"key": "one",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cerca tracce by artist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks/artist/6eUKZXaKkcviH0Ku9w2n3V",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks",
+						"artist",
+						"6eUKZXaKkcviH0Ku9w2n3V"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "group tracce artista by anno",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks/artist/group/year/6eUKZXaKkcviH0Ku9w2n3V",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks",
+						"artist",
+						"group",
+						"year",
+						"6eUKZXaKkcviH0Ku9w2n3V"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tracks artist by min max date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks/popularity/6eUKZXaKkcviH0Ku9w2n3V",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks",
+						"popularity",
+						"6eUKZXaKkcviH0Ku9w2n3V"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "avg popularity tracce artista by anno",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks/popularity/avg/year/6eUKZXaKkcviH0Ku9w2n3V",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks",
+						"popularity",
+						"avg",
+						"year",
+						"6eUKZXaKkcviH0Ku9w2n3V"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RaggruppaArtisti",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/artists/group/followers/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"artists",
+						"group",
+						"followers",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RaggruppaTracce",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/tracks/group/duration_ms/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tracks",
+						"group",
+						"duration_ms",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generi",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/artists/genres?value=pop&sortField=count&typeSort=-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"artists",
+						"genres"
+					],
+					"query": [
+						{
+							"key": "value",
+							"value": "pop"
+						},
+						{
+							"key": "sortField",
+							"value": "count"
+						},
+						{
+							"key": "typeSort",
+							"value": "-1"
+						},
+						{
+							"key": "countNull",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "5",
+							"disabled": true
+						},
+						{
+							"key": "skip",
+							"value": "2",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "group genere",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/artists/genres/group/dance+pop?min=as&max=as",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"artists",
+						"genres",
+						"group",
+						"dance+pop"
+					],
+					"query": [
+						{
+							"key": "min",
+							"value": "as"
+						},
+						{
+							"key": "max",
+							"value": "as"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
