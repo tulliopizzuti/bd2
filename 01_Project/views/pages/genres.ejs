@@ -291,7 +291,7 @@
 		var limit     =$('#chart_limit').val();
 		var orderField=$('#chart_order').val();
 		var orderType =$('#chart_orderType').val();
-		var url=`/api/artists/genres?graph=true&search=${search}&sortField=${orderField}&typeSort=${orderType}&countNull=${countNull}&limit=${limit}`;
+		var url=`/api/artists/genres?graph=true&value=${search}&sortField=${orderField}&typeSort=${orderType}&countNull=${countNull}&limit=${limit}`;
 		$.ajax({
 			url:url,
 			success: (data)=>initChart(data)

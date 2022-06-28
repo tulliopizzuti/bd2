@@ -19,5 +19,6 @@ router.get('/tracks/artist/:id',tracks_controller.findByArtistId);
 router.get('/tracks/artist/group/year/:id',tracks_controller.countTracksByYears);
 router.get('/tracks/popularity/avg/year/:id',tracks_controller.avgPopularityByYear);
 router.get('/tracks/popularity/:id',tracks_controller.popularityTracksChart);
+router.get('/tracks/group/:fieldname/:nclass',tracks_controller.groupTracks);
 
 module.exports = router;

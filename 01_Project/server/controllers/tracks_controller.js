@@ -184,3 +184,58 @@ exports.popularityTracksChart = async function(req,res){
 	});
 }
 
+
+exports.groupTracks = async function(req,res){
+	var fieldName = req.params.fieldname;
+	var classParam = req.params.nclass;
+	classParam=parseInt(classParam);
+	if(!Number.isInteger(classParam)){
+		res.json({
+			error : 'N class must be integer value'
+		});
+		return;
+	}
+	var min=await commonController.findMinOrMax(trackDb,fieldName,false,true);
+	var max=await commonController.findMinOrMax(trackDb,fieldName);
+	var l=max-min;
+	var b=Array(classParam).fill().map((x,i)=>(parseInt((i+1)*(l/classParam))));
+	b[classParam-1]=b[classParam-1]+1;
+	var artists=trackDb.aggregate().facet({
+		[fieldName]:[{
+			$bucket: { 
+				groupBy: "$"+fieldName, 
+				boundaries: b,
+				default:0
+			}
+		}]
+	})
+	artists.allowDiskUse(true).exec(function(err,result){
+		if(err) throw err;
+		if(result){
+			var labels=[];
+			var last=0;
+			for(var i=0;i<b.length;i++){
+				labels.push(last+"-"+(b[i]-1));
+				last=b[i];
+			}
+			var title=fieldName;
+			var data=result[0][fieldName].map((x,i)=>x.count);
+
+			res.json({
+				labels:labels,
+				datasets:[
+				{
+					label:title,
+					data:data,
+					backgroundColor:util.getNColors(data.length)
+				}]
+				
+			});
+		}
+		else {
+			res.json({
+				error : 'Error'
+			});
+		}
+	});
+}

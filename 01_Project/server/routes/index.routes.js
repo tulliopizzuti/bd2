@@ -11,6 +11,9 @@ router.get('/index',function(req,res){
 router.get('/popularity',function(req,res){
   res.render("pages/popularity");
 });
+router.get('/tracks',function(req,res){
+  res.render("pages/tracks");
+});
 router.get('/genres',function(req,res){
   res.render("pages/genres");
 });
