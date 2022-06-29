@@ -26,4 +26,7 @@ router.get('/compare_artists',function(req,res){
 router.get('/duplicates',function(req,res){
   res.render("pages/duplicates");
 });
+router.get('/lookup',function(req,res){
+  res.render("pages/lookup");
+});
 module.exports = router;

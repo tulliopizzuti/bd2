@@ -47,25 +47,3 @@ print("Tracks: create indexs");
 db.tracks.createIndex({"duration_ms":1});
 db.tracks.createIndex({"popularity":1});
 db.tracks.createIndex({"id_artists":1});
-
-
-
-/*print("Tracks: add objectID array");
-
-db.tracks.updateMany({}, {$set: {"_id_artists": []}});
-var i=0;
-db.artists.find().forEach( function (art) {   
-
-  db.tracks.find({id_artists:art.id}).forEach(function(tr){
-
-    tr._id_artists.push(art._id);
-    db.tracks.save(tr);
-
-  });
-  i++;
-  if((i%1000)===0){
-    print("Total: "+i);
-  }
-});
-*/
-

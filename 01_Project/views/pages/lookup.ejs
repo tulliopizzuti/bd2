@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+
+  <menu value="lookup"></menu>
+
+</head>
+
+<body>
+  <div id="app">
+    <%- include('../partials/menu'); %>
+    <div id="main">
+      <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+          <i class="bi bi-justify fs-3"></i>
+        </a>
+      </header>
+      <div class="page-heading">
+        <div class="page-title">
+          <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+              <h3>BD2 Ripoli/Pizzuti</h3>
+            </div>
+          </div>
+        </div>
+        <section class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title d-inline-block">Lookup artisti/tracce</h4>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="form-group">
+                      <label >Artista</label>
+                      <input type="text" id="artist" class="form-control" placeholder="Nome">
+
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label >Traccia</label>
+                      <input type="text" id="track" class="form-control" placeholder="Nome">
+
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label>Limit</label>
+                      <select class="form-select" id="limit">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                      </select>
+
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label>Tipo ordinamento</label>
+                      <select class="form-select" id="order">
+                        <option value="-1">DESC</option>
+                        <option value="1">ASC</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col text-center ">
+                    <button class="btn btn-primary align-items-center" onclick="loadData()">Esegui</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" id="container">
+                <div class="row d-none">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label >Inizio richiesta</label>
+                      <input type="text" id="startDate" disabled class="form-control" >
+                    </div>
+                  </div> 
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label >Fine richiesta</label>
+                      <input type="text" id="endDate" disabled class="form-control" >
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <table class="table" id="table" class="display responsive nowrap" style="width:100%">
+
+
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+
+<%- include('../partials/footer'); %>
+<script src="/assets/js/table.js"></script>
+<script src="/assets/js/util.js"></script>
+<script type="text/javascript">
+  var onLoad=false;
+  var spinnerContainerSelector="#container";
+  var table;
+  function errorOnLoadMessage(){
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Wait for the end of the current request...'
+    });
+  }
+  function clearForm(){
+    $("#startDate").val("");
+    $("#endDate").val("");
+    if(table){
+      table.destroy();
+    }
+    $("#table").children().remove();
+    
+  }
+  function fillForm(data){
+    $("#startDate").val( moment(data.startDate).format("DD/MM/YYYY hh:mm:ss"));
+    $("#endDate").val( moment(data.endDate).format("DD/MM/YYYY hh:mm:ss"));
+    var cols=["name","tracks_size"];
+    var th=$.map( cols, function( val, i ) {
+      return ($('<th/>').text(val));
+    });
+    var tr=$("<tr/>");
+    tr.append(th);
+    var thead=$("<thead/>");
+    thead.append(tr);
+    $("#table").prepend(thead);
+    var columns=[];
+    for(var i=0;i<cols.length;i++){
+      columns.push({data:cols[i]});
+    }
+    var table=$("#table").DataTable( {
+      order:[1,'desc'],
+      data: data.data,
+      columns: columns
+    } );
+    return table;
+  }
+  function loadData(){
+    if(!onLoad){
+      onLoad=true;
+      startSpinner(spinnerContainerSelector);
+      clearForm();
+      var artist=$("#artist").val();
+      var track=$("#track").val();
+      var limit=$("#limit").val();
+      var sort=$("#order").val();
+      var queryArray=[];
+      if(artist){
+        artist="artist="+artist;
+        queryArray.push(artist);
+      }
+      if(track){
+        track="track="+track;
+        queryArray.push(track);
+      }
+      if(limit){
+        limit="limit="+limit;
+        queryArray.push(limit);
+      }
+      if(sort){
+        sort="sort="+sort;
+        queryArray.push(sort);
+      }
+      var queryString="";
+      if(queryArray.length>0){
+        queryString="?"+queryArray.join("&"); 
+      }
+      $.ajax({
+        url: "/api/lookup"+queryString,
+        success: (data)=>{
+          table=fillForm(data);
+          stopSpinner(spinnerContainerSelector);
+          onLoad=false;
+        }
+      });
+
+
+
+
+    }
+    else{
+      errorOnLoadMessage();
+    }
+  }
+
+</script>
+
+</html>

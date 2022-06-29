@@ -261,33 +261,70 @@ function initQListaGeneri(q,valueSearch,countNull){
 
 
 exports.lookup = async function(req,res){
-	
+	var startDate=new Date();
+	var artist = req.query.artist;
+	var track = req.query.track;
+	var limit = req.query.limit;
+	var sort = req.query.sort;
+
+	if(!limit){
+		limit=10;
+	}else{
+		limit=parseInt(limit);
+	}
+	if(!sort){
+		sort=-1;
+	}else{
+		sort=parseInt(sort);
+	}
 	var q=artistDb.aggregate();
 	q.allowDiskUse(true);
 	q.sort({id:1});
+	if(artist){
+		q.match({
+			name:{ $regex: '.*' + artist + '.*', '$options' : 'i'  }
+		});
+	}
 	q.lookup({
 		from: 'tracks',
 		localField: 'id',
 		foreignField: 'id_artists',
 		as: 'tracks'
 	});
-	q.project({
-		_id:1,
-		id:1,
-		tracks:1,
-		tracks_size:{$size:'$tracks'}
-	});
-	q.project({
-		_id:1,
-		id:1,
-		tracks_size:1
-	});
-	q.sort({tracks_size:-1});
-	q.limit(10);
+	if(!track){
+		q.project({
+			tracks:1,
+			name:1,
+			tracks_size:{$size:'$tracks'}
+		});
+		q.project({
+			_id:0,
+			name:1,
+			tracks_size:1
+		});
+	}
+	else{
+		q.unwind({path:"$tracks"});
+		q.match({
+			"tracks.name":{ $regex: '.*'+track+'.*', '$options' : 'i'  }
+		});
+		q.group({_id:"$name",tracks_size:{$sum:1}});
+		q.project({_id:0,tracks_size:1,name:"$_id"});
+	}
+
+
+
+
+
+
+	q.sort({tracks_size:sort});
+	q.limit(limit);
 	q.allowDiskUse(true).exec(function(err,result){
 		if(err) throw err;
 		if(result){
-			res.json(result);
+			res.json({
+				startDate:startDate,endDate:new Date(),
+				data:result});
 			
 		}
 		else {

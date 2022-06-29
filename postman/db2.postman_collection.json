@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "011d9b55-b8c9-421b-99fa-a9257e4bddc2",
+		"_postman_id": "582c593f-acf8-481d-9a98-05cb4ed0c8ad",
 		"name": "db2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -208,7 +208,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/lookup",
+					"raw": "http://localhost:8080/api/lookup?artist=justin",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -217,6 +217,27 @@
 					"path": [
 						"api",
 						"lookup"
+					],
+					"query": [
+						{
+							"key": "artist",
+							"value": "justin"
+						},
+						{
+							"key": "track",
+							"value": "one",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "1",
+							"disabled": true
+						}
 					]
 				}
 			},
