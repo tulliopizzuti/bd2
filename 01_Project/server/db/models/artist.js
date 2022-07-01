@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
    id : String,
-   followers : String,
+   followers : Number,
     genres : Array,
     name : String,
-    popularity: String
+    popularity: Number
 })
 
-schema.index({name: 'text'});
 
 const artistDb = mongoose.model('artists', schema);
 

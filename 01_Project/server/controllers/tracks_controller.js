@@ -59,16 +59,7 @@ exports.findByArtistId = async function(req,res){
 	var minDate=req.query.min;
 	var maxDate=req.query.max;
 	var conditionFeat="1==1";
-	if(feat==="solo"){
-		conditionFeat="this.id_artists.length==1";
-	}
-	else if(feat==="featuring"){
-		conditionFeat="this.id_artists.length>1";
-
-	}
-	else{
-		
-	}
+	
 	var conditionDate;
 	if(minDate && maxDate){
 		conditionDate={$gte:new Date(minDate),$lte:new Date(maxDate)}
@@ -84,9 +75,22 @@ exports.findByArtistId = async function(req,res){
 	}
 	var conds=[
 	{fieldName:"id_artists",value:id},
-	{fieldName:fieldName,value:value},
-	{fieldName:"$where",value:conditionFeat,custom:true}
+	{fieldName:fieldName,value:value}
 	];
+	if(feat==="solo"){
+		conds.push({fieldName:"id_artists.1",value:{$exists:false},custom:true});
+		conditionFeat="this.id_artists.length==1";
+	}
+	else if(feat==="featuring"){
+		conds.push({fieldName:"id_artists.1",value:{$exists:true},custom:true});
+	}
+	else{
+		
+	}
+
+
+
+	
 	if(conditionDate){
 		conds.push({fieldName:"release_date",value:conditionDate,custom:true});
 	}

@@ -19,9 +19,6 @@ exports.duplicates = async function(req,res){
 
 }
 
-
-
-
 exports.groupArtists = async function(req,res){
 	var fieldName = req.params.fieldname;
 	var classParam = req.params.nclass;
@@ -76,7 +73,6 @@ exports.groupArtists = async function(req,res){
 		}
 	});
 }
-
 
 
 exports.groupArtistsGenres=async function(req,res){
@@ -188,7 +184,6 @@ exports.findArtists = async function(req,res){
 }
 
 
-
 exports.artistDetails = async function(id){
 	var res=await commonController.find(artistDb,[{fieldName:"id",value:id}],"id",1,1,0);	
 	return res;
@@ -247,6 +242,7 @@ exports.listaGeneri = async function(req,res){
 		}
 	});
 }
+
 function initQListaGeneri(q,valueSearch,countNull){
 	q=artistDb.aggregate();
 	q.unwind({ path: '$genres', preserveNullAndEmptyArrays: (countNull==="true"?true:false) })

@@ -44,6 +44,13 @@ db.artists.createIndex({"popularity":1});
 
 
 print("Tracks: create indexs");
+db.tracks.createIndex({"name":1});
 db.tracks.createIndex({"duration_ms":1});
 db.tracks.createIndex({"popularity":1});
 db.tracks.createIndex({"id_artists":1});
+db.tracks.createIndex({"artists":1});
+db.tracks.createIndex({"release_date":1});
+db.tracks.createIndex(
+    {'id_artists.1': 1},
+    {partialFilterExpression: {'id_artists.1': {$exists: true}}}
+);
