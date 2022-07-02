@@ -239,8 +239,9 @@
 
 
   function initTable(selector,spinnerSelector,cols,data){
+    colsName = ["Totale", "Nome"];
     cols = ["count", ...cols];
-    var th=$.map( cols, function( val, i ) {
+    var th=$.map( colsName, function( val, i ) {
       return ($('<th/>').text(val));
     });
     var tr=$("<tr/>");

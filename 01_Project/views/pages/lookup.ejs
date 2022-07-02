@@ -128,8 +128,9 @@
   function fillForm(data){
     $("#startDate").val( moment(data.startDate).format("DD/MM/YYYY hh:mm:ss"));
     $("#endDate").val( moment(data.endDate).format("DD/MM/YYYY hh:mm:ss"));
+    var colsName=["Nome","N° tracce"];
     var cols=["name","tracks_size"];
-    var th=$.map( cols, function( val, i ) {
+    var th=$.map( colsName, function( val, i ) {
       return ($('<th/>').text(val));
     });
     var tr=$("<tr/>");
